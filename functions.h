@@ -33,7 +33,8 @@ void selection() {
     // Escolher modo de jogo
     do
     {
-        printf("\n\nSeja bem-vindo a campo minado!\n\nEscolha modo de jogo: \n---------------------------------------------\n1. Fácil \n2. Intermediário \n3. Especialista (20 minutos ou mais de jogo)\n---------------------------------------------\n\nModo: ");
+        printf("\n\nSeja bem-vindo a campo minado!\n"
+        "\nEscolha modo de jogo: \n---------------------------------------------\n1. Fácil \n2. Intermediário \n3. Especialista (20 minutos ou mais de jogo)\n4. Ultranightmare (impossível)\n---------------------------------------------\n\nModo: ");
         scanf("%i", &x);
 
         loop = 1;
@@ -52,6 +53,11 @@ void selection() {
 
         case 3:
             uppermatrix = 30;
+            bombcount = 99;
+            break;
+
+        case 4:
+            uppermatrix = 100;
             bombcount = 99;
             break;
 
@@ -79,11 +85,12 @@ void printOut(struct block Matrix[uppermatrix][uppermatrix])
         printf("%3i  ", x);
     }
 
+    printf("\n ");
+        
     // Player Matrix
     for (int i = 0; i < uppermatrix; i++)
     {
 
-        printf("\n ");
         for (int p = 0; p < uppermatrix; p++)
         {
             printf("|‾‾‾|");
@@ -104,7 +111,7 @@ void printOut(struct block Matrix[uppermatrix][uppermatrix])
 
             if (revealed == 0)
             {
-                printf("| ■ |");
+                printf("| ▪︎ |");
                 continue;
             }
 
@@ -122,7 +129,7 @@ void printOut(struct block Matrix[uppermatrix][uppermatrix])
         {
             printf("|___|");
         }
-        printf("\n");
+        printf("\n ");
     }
 }
 
