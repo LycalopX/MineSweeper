@@ -129,9 +129,7 @@ int main()
             {
                 int c1, c2;
 
-                Matrix[i][j].revealed = 1;
-                counter++;
-                GeradorDeCampoDeMinas(c1, c2, Matrix);
+                GeradorDeCampoDeMinas(c1, c2, Matrix, i, j);
             }
 
             // Checando onde ele pisou

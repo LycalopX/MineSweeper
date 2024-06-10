@@ -63,14 +63,6 @@ void selection() {
 
 }
 
-// Estrutura de cada célula
-struct block
-{
-    int type;
-    int revealed;
-    int flag;
-};
-
 // Imprimir a tabela atual
 void printOut(struct block Matrix[uppermatrix][uppermatrix])
 {
@@ -112,7 +104,7 @@ void printOut(struct block Matrix[uppermatrix][uppermatrix])
 
             if (revealed == 0)
             {
-                printf("| ▪︎ |");
+                printf("| ■ |");
                 continue;
             }
 
@@ -319,7 +311,7 @@ struct block setUp(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
 
 
 // Mapeador de células da matriz
-void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppermatrix])
+void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppermatrix], int i, int j)
 {
 
     // Mapeando bombas
@@ -329,7 +321,9 @@ void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppe
         c1 = printRandoms(lowermatrix, uppermatrix - 1, bombcount);
         c2 = printRandoms(lowermatrix, uppermatrix - 1, bombcount);
 
-        if (Matrix[c1][c2].type == 9 && Matrix[c1][c2].revealed == 0)
+        // Tendo certeza de que não estamos colocando uma bomba duplicata, assim como não criando uma bomba
+        // no lugar onde já foi revelado (i,j)
+        if (Matrix[c1][c2].type == 9 && (i == c1 || j == c2))
         {
             continue;
         }
