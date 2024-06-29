@@ -26,7 +26,8 @@ int printRandoms(int lower, int upper, int count)
 }
 
 // Seleção
-void selection() {
+void selection()
+{
 
     int loop = 1;
 
@@ -34,7 +35,7 @@ void selection() {
     do
     {
         printf("\n\nSeja bem-vindo a campo minado!\n"
-        "\nEscolha modo de jogo: \n---------------------------------------------\n1. Fácil \n2. Intermediário \n3. Especialista (20 minutos ou mais de jogo)\n4. Ultranightmare (impossível)\n---------------------------------------------\n\nModo: ");
+               "\nEscolha modo de jogo: \n---------------------------------------------\n1. Fácil \n2. Intermediário \n3. Especialista (20 minutos ou mais de jogo)\n4. Ultranightmare (impossível)\n---------------------------------------------\n\nModo: ");
         scanf("%i", &x);
 
         loop = 1;
@@ -44,21 +45,24 @@ void selection() {
         case 1:
             uppermatrix = 9;
             bombcount = 10;
+            strcpy(fileName, "stats1.txt");
             break;
 
         case 2:
             uppermatrix = 16;
             bombcount = 40;
+            strcpy(fileName, "stats2.txt");
             break;
 
         case 3:
             uppermatrix = 30;
             bombcount = 99;
+            strcpy(fileName, "stats3.txt");
             break;
 
         case 4:
-            uppermatrix = 100;
-            bombcount = 99;
+            uppermatrix = 81;
+            bombcount = 729;
             break;
 
         default:
@@ -66,7 +70,6 @@ void selection() {
             loop = 0;
         }
     } while (loop == 0);
-
 }
 
 // Imprimir a tabela atual
@@ -86,7 +89,7 @@ void printOut(struct block Matrix[uppermatrix][uppermatrix])
     }
 
     printf("\n ");
-        
+
     // Player Matrix
     for (int i = 0; i < uppermatrix; i++)
     {
@@ -151,6 +154,14 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     struct block down = Matrix[i + 1][j];
     int conditiondown = i + 1 < uppermatrix;
 
+    struct block upright = Matrix[i - 1][j + 1];
+
+    struct block upleft = Matrix[i - 1][j - 1];
+
+    struct block downright = Matrix[i + 1][j + 1];
+
+    struct block downleft = Matrix[i + 1][j - 1];
+
     // Se já tiver sido revelado, parar imediatamente
     if (Matrix[i][j].revealed == 1)
     {
@@ -175,6 +186,31 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     // Se o bloco a esquerda existir
     if (conditionleft)
     {
+        if (conditionup)
+        {
+            if (upleft.type == 0)
+            {
+                Matrix[i - 1][j - 1] = read(Matrix, i - 1, (j - 1));
+            }
+            else
+            {
+                Matrix[i - 1][j - 1].revealed = 1;
+                counter++;
+            }
+        }
+
+        if (conditiondown)
+        {
+            if (downleft.type == 0)
+            {
+                Matrix[i + 1][j - 1] = read(Matrix, i + 1, (j - 1));
+            }
+            else
+            {
+                Matrix[i + 1][j - 1].revealed = 1;
+                counter++;
+            }
+        }
 
         if (left.revealed == 0)
         {
@@ -193,6 +229,32 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     // Se o bloco a direita existir
     if (conditionright)
     {
+        if (conditionup)
+        {
+            if (upright.type == 0)
+            {
+                Matrix[i - 1][j + 1] = read(Matrix, i - 1, (j + 1));
+            }
+            else
+            {
+                Matrix[i - 1][j + 1].revealed = 1;
+                counter++;
+            }
+        }
+
+        if (conditiondown)
+        {
+            if (downright.type == 0)
+            {
+                Matrix[i + 1][j + 1] = read(Matrix, i + 1, (j + 1));
+            }
+            else
+            {
+                Matrix[i + 1][j + 1].revealed = 1;
+                counter++;
+            }
+        }
+
         if (right.revealed == 0)
         {
             if (right.type == 0)
@@ -316,7 +378,6 @@ struct block setUp(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     return Matrix[i][j];
 };
 
-
 // Mapeador de células da matriz
 void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppermatrix], int i, int j)
 {
@@ -330,7 +391,7 @@ void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppe
 
         // Tendo certeza de que não estamos colocando uma bomba duplicata, assim como não criando uma bomba
         // no lugar onde já foi revelado (i,j)
-        if (Matrix[c1][c2].type == 9 && (i == c1 || j == c2))
+        if (Matrix[c1][c2].type == 9 || (i == c1 || j == c2))
         {
             continue;
         }
@@ -359,7 +420,6 @@ void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppe
     }
 }
 
-
 // Definir tempo do jogador
 int findSeconds(int time)
 {
@@ -380,4 +440,140 @@ int findHours(int time)
     int hours = (time / (60 * 60));
     printf("%i horas\n", hours);
     return hours;
+}
+
+// ESTRUTURA: {username}: [time, {score, /date, =gwon -glost
+// Cria usuário do jogo
+void createUser(char name[], FILE *file)
+{
+    // Extrair todos os jogadores
+    char linha[40];
+
+    // LER - Linha por linha
+    for (int i = 1; i > 0; i++)
+    {
+        if (StartsWith(linha, name))
+        {
+            return;
+        }
+
+        if (fgets(linha, 1000, file) == NULL)
+        {
+            fputs("\n", file);
+            fputs(name, file);
+            fputs(" 0 0 0 0 0", file);
+
+            fclose(file);
+            return;
+        }
+    }
+}
+
+// Procura usuário do jogo
+void findUser(char name[], FILE *file, char info[40])
+{
+    if (file == NULL)
+    {
+        strcpy(info, "NULL");
+        return;
+    }
+
+    // Extrair todos os jogadores
+    char linha[40];
+
+    // LER - Linha por linha
+    for (int i = 1; i > 0; i++)
+    {
+        if (StartsWith(linha, name))
+        {
+            strcpy(info, linha);
+            return;
+        }
+
+        if (fgets(linha, 1000, file) == NULL)
+        {
+            strcpy(info, "NULL");
+            return;
+        }
+    }
+}
+
+void findStats(char info[40])
+{
+    // "LycalopX 0 0 0 0 0"
+    char temp_filename[1024];
+
+    // LER - Valores
+    strcpy(temp_filename, "temp_____");
+    strcat(temp_filename, fileName);
+
+    FILE *file = fopen(temp_filename, "w");
+
+    fprintf(file, "%s", info);
+    fclose(file);
+
+    // Ler saporra
+    FILE *readfile = fopen(temp_filename, "r");
+
+    fscanf(readfile, "%s %i %i %i %i %i", username, &segundos, &pontos, &dia, &jganhos, &jperdidos);
+}
+
+void printLeaderboard(FILE *file)
+{
+
+    printf("\n\n--------------------------\n");
+
+    // Extrair todos os jogadores
+    char linha[40];
+
+    // Pular primeira linha
+    fgets(linha, 40, file);
+
+    // LER - Linha por linha
+    for (int i = 1; fgets(linha, 40, file) != NULL; i++)
+    {
+        findStats(linha);
+
+        printf("\n    %s: \nTempo: %i Pontuação: %i\nDia: %i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
+               username, segundos, pontos, dia, jganhos, jperdidos);
+    }
+
+    printf("--------------------------");
+}
+
+void updateUser(char name[], FILE *file)
+{
+    int p, i;
+
+    if (file == NULL)
+    {
+        printf("\nNão foi possível atualizar os seus novos pontos!! :o");
+        return;
+    }
+
+    // Extrair todos os jogadores
+    char linha[40];
+
+    char **vet = malloc(sizeof(char *));
+
+    if (vet == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    for (i = 0; fgets(linha, sizeof(linha), file) != NULL; i++) {
+
+        p = i + 1;
+
+        vet = realloc(vet, (sizeof(char *) * p));
+
+        vet[i] = malloc(40 * sizeof(char));
+
+        strcpy(vet[i], linha);
+    }
+
+    int length = sizeof(vet) / sizeof(vet[0]);
+
+    printf("%d", length);
+
 }

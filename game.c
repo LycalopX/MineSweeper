@@ -1,54 +1,119 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <math.h>
-#include <sys/time.h>
 
 // Variáveis
 #include "functions.h"
 
 int main()
 {
-    char username[20];
-    int score, place, option, loop;
+    // Nome de usuário
+    char info[20];
 
-    printf("\n ‾‾‾‾‾‾‾‾‾‾‾‾\n CAMPO MINADO\n ____________ \n\nNome de usuário: ");
+    // Stats do usuário
+    int score, place, option, loop, loop2 = 0, loop3 = 0;
+
+    printf("\n ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
+           "   ___                                     _                 _       \n"
+           "  / __\\__ _ _ __ ___  _ __   ___     /\\/\\ (_)_ __   __ _  __| | ___  \n"
+           " / /  / _` | '_ ` _ \\| '_ \\ / _ \\   /    \\| | '_ \\ / _` |/ _` |/ _ \\ \n"
+           "/ /__| (_| | | | | | | |_) | (_) | / /\\/\\ \\ | | | | (_| | (_| | (_) |\n"
+           "\\____/\\__,_|_| |_| |_| .__/ \\___/  \\/    \\/_|_| |_|\\__,_|\\__,_|\\___/ \n"
+           "                     |_|                                              \n"
+           "\n ________________________________________________________________________ \n\nNome de usuário (sem espaços): ");
+
     scanf("%s", username);
 
-    printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n---------------------------------------------\n\nOpção: ");
+    printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
     scanf("%d", &option);
 
-    switch (option)
+    // Repetir até valor coerente...
+    do
     {
-    case 1:
-        selection();
-        break;
+        loop3 = 1;
 
-    case 2:
-        printf("Vai tomar no cu");
-        return 0;
+        switch (option)
+        {
+        case 1:
+            selection();
+            break;
 
-    default:
-        printf("Valor inválido!");
-        break;
+        case 2:
+
+            while (loop2 == 0)
+            {
+                selection();
+
+                // Arquivo
+                FILE *file = fopen(fileName, "r");
+
+                // Ninguém jogou ainda...
+                if (!file)
+                {
+                    printf("\nNão há pontuações registradas nesse modo de jogo.");
+                }
+                else
+                {
+                    printLeaderboard(file);
+                }
+
+                printf("\n\nE agora? Gostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
+                scanf("%d", &option);
+
+                switch (option)
+                {
+                case 1:
+                    selection();
+                    loop2 = 1;
+                case 2:
+                    break;
+                case 3:
+                    printf("\n\nObrigado por jogar conosco!\n\n");
+                    return 0;
+                }
+            }
+
+            break;
+        case 3:
+            printf("\n\nObrigado por jogar conosco!\n\n");
+            return 0;
+
+        default:
+            printf("\nValor inválido! \n\n");
+            loop3 = 0;
+            printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
+            scanf("%d", &option);
+            break;
+        }
+    } while (loop3 == 0);
+
+    // Arquivo
+    FILE *file = fopen(fileName, "r");
+
+    // Abrindo o usuário
+    findUser(username, file, info);
+
+    // Procurando o usuário
+    if (!strcmp("NULL", info))
+    {
+        // Criamos o arquivo
+        FILE *fp = fopen(fileName, "a");
+
+        // Criamos o usuário
+        createUser(username, fp);
+
+        // Arquivo atualizado
+        file = fopen(fileName, "r");
+
+        // Abrindo o usuário
+        findUser(username, file, info);
     }
 
     // Definindo a matriz
     struct block Matrix[uppermatrix][uppermatrix];
 
+    // Definindo tudo como zero dentro da matriz...
+    memset(Matrix, 0, sizeof(Matrix));
+
     // Gerador de seed
     srand(time(0));
-
-    // Colocando tudo como não revelado ainda
-    for (int i = 0; i < uppermatrix; i++)
-    {
-        for (int j = 0; j < uppermatrix; j++)
-        {
-            Matrix[i][j].revealed = 0;
-            Matrix[i][j].flag = 0;
-        }
-    }
 
     // Definindo tudo que precisaremos para o início do jogo
     int gmover = 0;
@@ -57,6 +122,8 @@ int main()
     // Execution time pt. 1
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
+
+    updateUser(username, file);
 
     // p =/ 0, game over :d
     while (gmover == 0)
@@ -151,6 +218,10 @@ int main()
         {
             break;
         }
+        else if (!counter)
+        {
+            printf("\nExemplo: A0");
+        }
 
         printf("\nPosição a revelar: ");
         scanf("%s", string);
@@ -165,15 +236,15 @@ int main()
 
     // Execution time pt. 2
     gettimeofday(&tv2, NULL);
-    int time = (double)(tv2.tv_usec - tv1.tv_usec) / 1000000 + (double)(tv2.tv_sec - tv1.tv_sec), 
+    int time = (double)(tv2.tv_usec - tv1.tv_usec) / 1000000,
 
-    hours = findHours(time), 
-    minutes = findMinutes(time), 
-    seconds = findSeconds(time);
-
-
+        hours = findHours(time),
+        minutes = findMinutes(time),
+        seconds = findSeconds(time);
 
     printf("\n\nParabéns %s! \nTodas as Bombas foram desarmadas!"
            "\n\nStats da partida: \nTempo: %.2i:%.2i:%.2i\nPosição atual no placar: %i° lugar\nPontos totais: %i\n\n",
            username, hours, minutes, seconds, place, score);
+
+    // Escrever stats do jogo
 }
