@@ -1,8 +1,5 @@
 #include "constants.h"
 
-// Contagem do número de células reveladas, para levar à tela de vitória
-int counter = 0;
-
 // Checa o começo do string
 int StartsWith(const char *a, const char *b)
 {
@@ -76,7 +73,7 @@ void selection()
 }
 
 // Imprimir a tabela atual
-void printOut(struct block Matrix[uppermatrix][uppermatrix])
+void printOut(struct block **Matrix)
 {
 
     // Números
@@ -140,36 +137,21 @@ void printOut(struct block Matrix[uppermatrix][uppermatrix])
 }
 
 // Ler para cada movimento se outras irão abrir junto
-struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
+void read(struct block **Matrix, int i, int j)
 {
     printOut(Matrix);
 
     int sum = 0;
 
-    struct block right = Matrix[i][j + 1];
-    int conditionright = j + 1 < uppermatrix;
-
-    struct block left = Matrix[i][j - 1];
     int conditionleft = (j - 1) >= 0;
-
-    struct block up = Matrix[i - 1][j];
+    int conditionright = j + 1 < uppermatrix;
     int conditionup = (i - 1) >= 0;
-
-    struct block down = Matrix[i + 1][j];
     int conditiondown = i + 1 < uppermatrix;
-
-    struct block upright = Matrix[i - 1][j + 1];
-
-    struct block upleft = Matrix[i - 1][j - 1];
-
-    struct block downright = Matrix[i + 1][j + 1];
-
-    struct block downleft = Matrix[i + 1][j - 1];
 
     // Se já tiver sido revelado, parar imediatamente
     if (Matrix[i][j].revealed == 1)
     {
-        return Matrix[i][j];
+        return;
     }
 
     // Se objeto for entre 1 e 8 pontos, revelar esse, e parar imediatamente
@@ -177,7 +159,8 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     {
         Matrix[i][j].revealed = 1;
         counter++;
-        return Matrix[i][j];
+        printf("%d \n", counter);
+        return;
     }
 
     // Simplesmente revela o objeto
@@ -185,34 +168,49 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     {
         Matrix[i][j].revealed = 1;
         counter++;
+        printf("%d \n", counter);
     }
 
     // Se o bloco a esquerda existir
     if (conditionleft)
     {
-        if (conditionup && upleft.revealed == 0)
+        struct block left = Matrix[i][j - 1];
+
+        if (conditionup)
         {
-            if (upleft.type == 0)
+            struct block upleft = Matrix[i - 1][j - 1];
+
+            if (upleft.revealed == 0)
             {
-                Matrix[i - 1][j - 1] = read(Matrix, i - 1, (j - 1));
-            }
-            else
-            {
-                Matrix[i - 1][j - 1].revealed = 1;
-                counter++;
+                if (upleft.type == 0)
+                {
+                    read(Matrix, i - 1, (j - 1));
+                }
+                else
+                {
+                    Matrix[i - 1][j - 1].revealed = 1;
+                    counter++;
+                    printf("%d \n", counter);
+                }
             }
         }
 
-        if (conditiondown && downleft.revealed == 0)
+        if (conditiondown)
         {
-            if (downleft.type == 0)
+
+            struct block downleft = Matrix[i + 1][j - 1];
+            if (downleft.revealed == 0)
             {
-                Matrix[i + 1][j - 1] = read(Matrix, i + 1, (j - 1));
-            }
-            else
-            {
-                Matrix[i + 1][j - 1].revealed = 1;
-                counter++;
+                if (downleft.type == 0)
+                {
+                    read(Matrix, i + 1, (j - 1));
+                }
+                else
+                {
+                    Matrix[i + 1][j - 1].revealed = 1;
+                    counter++;
+                    printf("%d \n", counter);
+                }
             }
         }
 
@@ -220,12 +218,13 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
         {
             if (left.type == 0)
             {
-                Matrix[i][j - 1] = read(Matrix, i, (j - 1));
+                read(Matrix, i, (j - 1));
             }
             else
             {
                 Matrix[i][j - 1].revealed = 1;
                 counter++;
+                printf("%d \n", counter);
             }
         }
     }
@@ -233,29 +232,43 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     // Se o bloco a direita existir
     if (conditionright)
     {
-        if (conditionup && upright.revealed == 0)
+        struct block right = Matrix[i][j + 1];
+
+        if (conditionup)
         {
-            if (upright.type == 0)
+            struct block upright = Matrix[i - 1][j + 1];
+
+            if (upright.revealed == 0)
             {
-                Matrix[i - 1][j + 1] = read(Matrix, i - 1, (j + 1));
-            }
-            else
-            {
-                Matrix[i - 1][j + 1].revealed = 1;
-                counter++;
+                if (upright.type == 0)
+                {
+                    read(Matrix, i - 1, (j + 1));
+                }
+                else
+                {
+                    Matrix[i - 1][j + 1].revealed = 1;
+                    counter++;
+                    printf("%d \n", counter);
+                }
             }
         }
 
-        if (conditiondown && downright.revealed == 0)
+        if (conditiondown)
         {
-            if (downright.type == 0)
+            struct block downright = Matrix[i + 1][j + 1];
+
+            if (downright.revealed == 0)
             {
-                Matrix[i + 1][j + 1] = read(Matrix, i + 1, (j + 1));
-            }
-            else
-            {
-                Matrix[i + 1][j + 1].revealed = 1;
-                counter++;
+                if (downright.type == 0)
+                {
+                    read(Matrix, i + 1, (j + 1));
+                }
+                else
+                {
+                    Matrix[i + 1][j + 1].revealed = 1;
+                    counter++;
+                    printf("%d \n", counter);
+                }
             }
         }
 
@@ -263,12 +276,13 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
         {
             if (right.type == 0)
             {
-                Matrix[i][j + 1] = read(Matrix, i, j + 1);
+                read(Matrix, i, j + 1);
             }
             else
             {
                 Matrix[i][j + 1].revealed = 1;
                 counter++;
+                printf("%d \n", counter);
             }
         }
     }
@@ -276,16 +290,19 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     // Se o bloco para cima existir
     if (conditionup)
     {
+        struct block up = Matrix[i - 1][j];
+
         if (up.revealed == 0)
         {
-            if (up.type == 0 || up.revealed == 1)
+            if (up.type == 0)
             {
-                Matrix[i - 1][j] = read(Matrix, i - 1, j);
+                read(Matrix, i - 1, j);
             }
             else
             {
                 Matrix[i - 1][j].revealed = 1;
                 counter++;
+                printf("%d \n", counter);
             }
         }
     }
@@ -293,97 +310,116 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     // Se o bloco para baixo existir
     if (conditiondown)
     {
+        struct block down = Matrix[i + 1][j];
 
         if (down.revealed == 0)
         {
-            if (down.type == 0 || down.revealed == 1)
+            if (down.type == 0)
             {
-                Matrix[i + 1][j] = read(Matrix, i + 1, j);
+                read(Matrix, i + 1, j);
             }
             else
             {
                 Matrix[i + 1][j].revealed = 1;
                 counter++;
+                printf("%d \n", counter);
             }
         }
     }
 
-    return Matrix[i][j];
+    return;
 };
 
 // Conformar os pontos atribuídos a cada célula
-struct block setUp(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
+void setUp(struct block **Matrix, int i, int j)
 {
+    int conditionup = (i - 1) >= 0;
+    int conditiondown = i + 1 < uppermatrix;
+    int conditionright = j + 1 < uppermatrix;
+    int conditionleft = (j - 1) >= 0;
 
     int sum = 0;
 
-    struct block right = Matrix[i][j + 1];
-    int conditionright = j + 1 < uppermatrix;
-
-    if (conditionright && right.type == 9)
+    if (conditionright)
     {
-        sum++;
+        struct block right = Matrix[i][j + 1];
+
+        if (right.type == 9)
+        {
+            sum++;
+        }
+
+        if (conditionup)
+        {
+            struct block upright = Matrix[i - 1][j + 1];
+            if (upright.type == 9)
+            {
+                sum++;
+            }
+        }
+
+        if (conditiondown)
+        {
+            struct block downright = Matrix[i + 1][j + 1];
+            if (downright.type == 9)
+            {
+                sum++;
+            }
+        }
     }
 
-    struct block left = Matrix[i][j - 1];
-    int conditionleft = (j - 1) >= 0;
-
-    if (conditionleft && left.type == 9)
+    if (conditionleft)
     {
-        sum++;
+        struct block left = Matrix[i][j - 1];
+        if (left.type == 9)
+        {
+            sum++;
+        }
+
+        if (conditionup)
+        {
+            struct block upleft = Matrix[i - 1][j - 1];
+            if (upleft.type == 9)
+            {
+                sum++;
+            }
+        }
+
+        if (conditiondown)
+        {
+            struct block downleft = Matrix[i + 1][j - 1];
+            if (downleft.type == 9)
+            {
+                sum++;
+            }
+        }
     }
 
-    struct block up = Matrix[i - 1][j];
-    int conditionup = (i - 1) >= 0;
-
-    if (conditionup && up.type == 9)
+    if (conditionup)
     {
-        sum++;
+        struct block up = Matrix[i - 1][j];
+        if (up.type == 9)
+        {
+            sum++;
+        }
     }
 
-    struct block down = Matrix[i + 1][j];
-    int conditiondown = i + 1 < uppermatrix;
-
-    if (conditiondown && down.type == 9)
+    if (conditiondown)
     {
-        sum++;
-    }
-
-    struct block upright = Matrix[i - 1][j + 1];
-
-    if (conditionup && conditionright && upright.type == 9)
-    {
-        sum++;
-    }
-
-    struct block upleft = Matrix[i - 1][j - 1];
-
-    if (conditionleft && conditionup && upleft.type == 9)
-    {
-        sum++;
-    }
-
-    struct block downright = Matrix[i + 1][j + 1];
-
-    if (conditiondown && conditionright && downright.type == 9)
-    {
-        sum++;
-    }
-
-    struct block downleft = Matrix[i + 1][j - 1];
-
-    if (conditiondown && conditionleft && downleft.type == 9)
-    {
-        sum++;
+        struct block down = Matrix[i + 1][j];
+        if (down.type == 9)
+        {
+            sum++;
+        }
     }
 
     Matrix[i][j].type = sum;
 
-    return Matrix[i][j];
+    return;
 };
 
 // Mapeador de células da matriz
-void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppermatrix], int i, int j)
+void GeradorDeCampoDeMinas(int c1, int c2, struct block **Matrix, int i, int j)
 {
 
     // Mapeando bombas
@@ -419,7 +455,7 @@ void GeradorDeCampoDeMinas(int c1, int c2, struct block Matrix[uppermatrix][uppe
                 continue;
             }
 
-            Matrix[i][j] = setUp(Matrix, i, j);
+            setUp(Matrix, i, j);
         }
     }
 }

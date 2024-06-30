@@ -107,13 +107,24 @@ int main()
     }
 
     // Definindo a matriz
-    struct block Matrix[uppermatrix][uppermatrix];
+    Matrix = malloc(uppermatrix * sizeof(struct block *));
 
-    // Definindo tudo como zero dentro da matriz...
-    memset(Matrix, 0, sizeof(Matrix));
+    // Alocando as linhas...
+    for (int i = 0; i < uppermatrix; i++)
+    {
+        Matrix[i] = malloc(uppermatrix * sizeof(struct block));
+
+        for (int j = 0; j < uppermatrix; j++)
+        {
+            Matrix[i][j].revealed = 0;
+            Matrix[i][j].flag = 0;
+            Matrix[i][j].type = 0;
+        }
+    }
 
     // Gerador de seed
     srand(time(0));
+
 
     // Definindo tudo que precisaremos para o início do jogo
     int gmover = 0;
@@ -207,7 +218,7 @@ int main()
             }
             else
             {
-                Matrix[i][j] = read(Matrix, i, j);
+                read(Matrix, i, j);
             }
         }
 
