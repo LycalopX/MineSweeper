@@ -1,5 +1,8 @@
 #include "constants.h"
 
+// Contagem do número de células reveladas, para levar à tela de vitória
+int counter = 0;
+
 // Checa o começo do string
 int StartsWith(const char *a, const char *b)
 {
@@ -139,6 +142,7 @@ void printOut(struct block Matrix[uppermatrix][uppermatrix])
 // Ler para cada movimento se outras irão abrir junto
 struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
 {
+    printOut(Matrix);
 
     int sum = 0;
 
@@ -186,7 +190,7 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     // Se o bloco a esquerda existir
     if (conditionleft)
     {
-        if (conditionup)
+        if (conditionup && upleft.revealed == 0)
         {
             if (upleft.type == 0)
             {
@@ -199,7 +203,7 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
             }
         }
 
-        if (conditiondown)
+        if (conditiondown && downleft.revealed == 0)
         {
             if (downleft.type == 0)
             {
@@ -229,7 +233,7 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     // Se o bloco a direita existir
     if (conditionright)
     {
-        if (conditionup)
+        if (conditionup && upright.revealed == 0)
         {
             if (upright.type == 0)
             {
@@ -242,7 +246,7 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
             }
         }
 
-        if (conditiondown)
+        if (conditiondown && downright.revealed == 0)
         {
             if (downright.type == 0)
             {
@@ -274,7 +278,7 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
     {
         if (up.revealed == 0)
         {
-            if (up.type == 0)
+            if (up.type == 0 || up.revealed == 1)
             {
                 Matrix[i - 1][j] = read(Matrix, i - 1, j);
             }
@@ -292,7 +296,7 @@ struct block read(struct block Matrix[uppermatrix][uppermatrix], int i, int j)
 
         if (down.revealed == 0)
         {
-            if (down.type == 0)
+            if (down.type == 0 || down.revealed == 1)
             {
                 Matrix[i + 1][j] = read(Matrix, i + 1, j);
             }
@@ -556,12 +560,14 @@ void updateUser(char name[], FILE *file)
 
     char **vet = malloc(sizeof(char *));
 
-    if (vet == NULL) {
+    if (vet == NULL)
+    {
         printf("Memory allocation failed\n");
         return;
     }
 
-    for (i = 0; fgets(linha, sizeof(linha), file) != NULL; i++) {
+    for (i = 0; fgets(linha, sizeof(linha), file) != NULL; i++)
+    {
 
         p = i + 1;
 
@@ -575,5 +581,4 @@ void updateUser(char name[], FILE *file)
     int length = sizeof(vet) / sizeof(vet[0]);
 
     printf("%d", length);
-
 }

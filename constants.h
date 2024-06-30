@@ -5,8 +5,6 @@ char fileName[11], username[20];
 // Configurações das matrizes
 int x, lowermatrix = 0, uppermatrix, bombcount;
 
-// Contagem do número de células reveladas, para levar à tela de vitória
-int counter = 0;
 
 // Estrutura de cada célula
 struct block
