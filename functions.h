@@ -1,3 +1,4 @@
+// Importando o arquivo de constantes
 #include "constants.h"
 
 // Checa o começo do string
@@ -73,7 +74,7 @@ void selection()
 }
 
 // Imprimir a tabela atual
-void printOut(struct block **Matrix)
+void printOut()
 {
 
     // Números
@@ -137,9 +138,8 @@ void printOut(struct block **Matrix)
 }
 
 // Ler para cada movimento se outras irão abrir junto
-void read(struct block **Matrix, int i, int j)
+void read(int i, int j)
 {
-    printOut(Matrix);
 
     int sum = 0;
 
@@ -159,7 +159,7 @@ void read(struct block **Matrix, int i, int j)
     {
         Matrix[i][j].revealed = 1;
         counter++;
-        printf("%d \n", counter);
+
         return;
     }
 
@@ -168,7 +168,6 @@ void read(struct block **Matrix, int i, int j)
     {
         Matrix[i][j].revealed = 1;
         counter++;
-        printf("%d \n", counter);
     }
 
     // Se o bloco a esquerda existir
@@ -184,13 +183,12 @@ void read(struct block **Matrix, int i, int j)
             {
                 if (upleft.type == 0)
                 {
-                    read(Matrix, i - 1, (j - 1));
+                    read(i - 1, (j - 1));
                 }
                 else
                 {
                     Matrix[i - 1][j - 1].revealed = 1;
                     counter++;
-                    printf("%d \n", counter);
                 }
             }
         }
@@ -203,13 +201,12 @@ void read(struct block **Matrix, int i, int j)
             {
                 if (downleft.type == 0)
                 {
-                    read(Matrix, i + 1, (j - 1));
+                    read(i + 1, (j - 1));
                 }
                 else
                 {
                     Matrix[i + 1][j - 1].revealed = 1;
                     counter++;
-                    printf("%d \n", counter);
                 }
             }
         }
@@ -218,13 +215,12 @@ void read(struct block **Matrix, int i, int j)
         {
             if (left.type == 0)
             {
-                read(Matrix, i, (j - 1));
+                read(i, (j - 1));
             }
             else
             {
                 Matrix[i][j - 1].revealed = 1;
                 counter++;
-                printf("%d \n", counter);
             }
         }
     }
@@ -242,13 +238,12 @@ void read(struct block **Matrix, int i, int j)
             {
                 if (upright.type == 0)
                 {
-                    read(Matrix, i - 1, (j + 1));
+                    read(i - 1, (j + 1));
                 }
                 else
                 {
                     Matrix[i - 1][j + 1].revealed = 1;
                     counter++;
-                    printf("%d \n", counter);
                 }
             }
         }
@@ -261,13 +256,12 @@ void read(struct block **Matrix, int i, int j)
             {
                 if (downright.type == 0)
                 {
-                    read(Matrix, i + 1, (j + 1));
+                    read(i + 1, (j + 1));
                 }
                 else
                 {
                     Matrix[i + 1][j + 1].revealed = 1;
                     counter++;
-                    printf("%d \n", counter);
                 }
             }
         }
@@ -276,13 +270,12 @@ void read(struct block **Matrix, int i, int j)
         {
             if (right.type == 0)
             {
-                read(Matrix, i, j + 1);
+                read(i, j + 1);
             }
             else
             {
                 Matrix[i][j + 1].revealed = 1;
                 counter++;
-                printf("%d \n", counter);
             }
         }
     }
@@ -296,13 +289,12 @@ void read(struct block **Matrix, int i, int j)
         {
             if (up.type == 0)
             {
-                read(Matrix, i - 1, j);
+                read(i - 1, j);
             }
             else
             {
                 Matrix[i - 1][j].revealed = 1;
                 counter++;
-                printf("%d \n", counter);
             }
         }
     }
@@ -316,13 +308,12 @@ void read(struct block **Matrix, int i, int j)
         {
             if (down.type == 0)
             {
-                read(Matrix, i + 1, j);
+                read(i + 1, j);
             }
             else
             {
                 Matrix[i + 1][j].revealed = 1;
                 counter++;
-                printf("%d \n", counter);
             }
         }
     }
@@ -331,7 +322,7 @@ void read(struct block **Matrix, int i, int j)
 };
 
 // Conformar os pontos atribuídos a cada célula
-void setUp(struct block **Matrix, int i, int j)
+void setUp(int i, int j)
 {
     int conditionup = (i - 1) >= 0;
     int conditiondown = i + 1 < uppermatrix;
@@ -419,7 +410,7 @@ void setUp(struct block **Matrix, int i, int j)
 };
 
 // Mapeador de células da matriz
-void GeradorDeCampoDeMinas(int c1, int c2, struct block **Matrix, int i, int j)
+void GeradorDeCampoDeMinas(int c1, int c2, int i, int j)
 {
 
     // Mapeando bombas
@@ -431,15 +422,13 @@ void GeradorDeCampoDeMinas(int c1, int c2, struct block **Matrix, int i, int j)
 
         // Tendo certeza de que não estamos colocando uma bomba duplicata, assim como não criando uma bomba
         // no lugar onde já foi revelado (i,j)
-        if (Matrix[c1][c2].type == 9 || (i == c1 || j == c2))
+        if (Matrix[c1][c2].type == 9 || (abs(i - c1) == 1 && abs(j - c2) == 1) || (abs(i - c1) == 1 && abs(j - c2) == 0) || (abs(i - c1) == 0 && abs(j - c2) == 1) || (c1 == i && c2 == j))
         {
             continue;
         }
         else
         {
             Matrix[c1][c2].type = 9;
-            Matrix[c1][c2].revealed = 0;
-            Matrix[c1][c2].flag = 0;
         }
 
         n++;
@@ -455,7 +444,7 @@ void GeradorDeCampoDeMinas(int c1, int c2, struct block **Matrix, int i, int j)
                 continue;
             }
 
-            setUp(Matrix, i, j);
+            setUp(i, j);
         }
     }
 }
@@ -464,22 +453,34 @@ void GeradorDeCampoDeMinas(int c1, int c2, struct block **Matrix, int i, int j)
 int findSeconds(int time)
 {
     int seconds = (time) % 60;
-    printf("%i segundos\n", seconds);
     return seconds;
 }
 
 int findMinutes(int time)
 {
     int minutes = (time / (60)) % 3600;
-    printf("%i minutos\n", minutes);
     return minutes;
 }
 
 int findHours(int time)
 {
     int hours = (time / (60 * 60));
-    printf("%i horas\n", hours);
     return hours;
+}
+
+int findDays(int time) {
+    int days = (time / (60 * 60 * 24));
+    return days;
+}
+
+int findMonths(int time) {
+    int months = (time / (60 * 60 * 24 * 30));
+    return months;
+}
+
+int findYears(int time) {
+    int years = (time / (60 * 60 * 24 * 30 * 12));
+    return years;
 }
 
 // ESTRUTURA: {username}: [time, {score, /date, =gwon -glost
@@ -574,16 +575,24 @@ void printLeaderboard(FILE *file)
     {
         findStats(linha);
 
-        printf("\n    %s: \nTempo: %i Pontuação: %i\nDia: %i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
+        if (!segundos) {
+            continue;
+        }
+
+        printf("\n    %s: \nTempo: %is Pontuação: %i\nDia: %i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
                username, segundos, pontos, dia, jganhos, jperdidos);
     }
 
     printf("--------------------------");
 }
 
-void updateUser(char name[], FILE *file)
+void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
 {
+
     int p, i;
+
+    // Arquivo
+    FILE *file = fopen(fileName, "r");
 
     if (file == NULL)
     {
@@ -594,27 +603,97 @@ void updateUser(char name[], FILE *file)
     // Extrair todos os jogadores
     char linha[40];
 
-    char **vet = malloc(sizeof(char *));
+    char **strings = NULL;
 
-    if (vet == NULL)
+    strings = malloc(sizeof(char *));
+    ;
+
+    if (strings == NULL)
     {
         printf("Memory allocation failed\n");
         return;
     }
 
+    // Essa função serve o propósito de criar um novo arquivo que contém as novas
+    // informações, sem alterar as outras, e isso é feito transportando todos os
+    // dados para uma array, e os sobrescrevendo no arquivo
+
+    // Alocação dinâmica é necessária!
     for (i = 0; fgets(linha, sizeof(linha), file) != NULL; i++)
     {
-
+        // variáveis
         p = i + 1;
 
-        vet = realloc(vet, (sizeof(char *) * p));
+        // Realocar para caber a nova linha do arquivo
+        strings = realloc(strings, p * (sizeof(char *)));
 
-        vet[i] = malloc(40 * sizeof(char));
+        // Alocar memória para cada string que usamos
+        strings[i] = (char *)malloc((41) * sizeof(char));
 
-        strcpy(vet[i], linha);
+        // Agora precisamos escrever na "nova linha" os novos dados de jogador!
+        if (StartsWith(linha, username))
+        {
+            findStats(linha);
+
+            if (segundos > newTime || segundos == 0)
+            {
+                segundos = newTime;
+                dia = newDay;
+            }
+            pontos = pontos + score;
+            jganhos = jganhos + ganhos;
+            jperdidos = jperdidos + perdas;
+
+            char charNumber[20];
+
+            // precisamos escrever todos os dados novos!
+            // Lembrando que elas são variáveis globais
+            strcat(strings[i], username);
+            strcat(strings[i], " ");
+
+            // Usaremos o mesmo string (charNumber) para transformar de int para char...
+
+            sprintf(charNumber, "%d", segundos);
+
+            strcat(strings[i], charNumber);
+            strcat(strings[i], " ");
+
+            sprintf(charNumber, "%d", pontos);
+
+            strcat(strings[i], charNumber);
+            strcat(strings[i], " ");
+
+            sprintf(charNumber, "%d", dia);
+
+            strcat(strings[i], charNumber);
+            strcat(strings[i], " ");
+
+            sprintf(charNumber, "%d", jganhos);
+
+            strcat(strings[i], charNumber);
+            strcat(strings[i], " ");
+
+            sprintf(charNumber, "%d", jperdidos);
+
+            strcat(strings[i], charNumber);
+            strcat(strings[i], "\n");
+
+            continue;
+        };
+
+        // Se os dados não forem alterados, só o incluir o string nessa casa i.
+        strcpy(strings[i], linha);
     }
 
-    int length = sizeof(vet) / sizeof(vet[0]);
+    fclose(file);
 
-    printf("%d", length);
+    // Arquivo
+    FILE *writefile = fopen(fileName, "w");
+
+    for (i = 0; i < p; i++)
+    {
+        fputs(strings[i], writefile);
+    };
+
+    fclose(writefile);
 }

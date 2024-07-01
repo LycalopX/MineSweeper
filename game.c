@@ -125,7 +125,6 @@ int main()
     // Gerador de seed
     srand(time(0));
 
-
     // Definindo tudo que precisaremos para o início do jogo
     int gmover = 0;
     char string[9] = "";
@@ -133,8 +132,6 @@ int main()
     // Execution time pt. 1
     struct timeval tv1, tv2;
     gettimeofday(&tv1, NULL);
-
-    updateUser(username, file);
 
     // p =/ 0, game over :d
     while (gmover == 0)
@@ -174,7 +171,7 @@ int main()
             {
                 Matrix[i][j].flag = 1;
 
-                printOut(Matrix);
+                printOut();
 
                 printf("\nPosição a revelar: ");
                 scanf("%s", string);
@@ -185,7 +182,7 @@ int main()
             {
                 Matrix[i][j].flag = 0;
 
-                printOut(Matrix);
+                printOut();
 
                 printf("\nPosição a revelar: ");
                 scanf("%s", string);
@@ -207,7 +204,7 @@ int main()
             {
                 int c1, c2;
 
-                GeradorDeCampoDeMinas(c1, c2, Matrix, i, j);
+                GeradorDeCampoDeMinas(c1, c2, i, j);
             }
 
             // Checando onde ele pisou
@@ -218,12 +215,12 @@ int main()
             }
             else
             {
-                read(Matrix, i, j);
+                read(i, j);
             }
         }
 
         // Printing out the Matrix
-        printOut(Matrix);
+        printOut();
 
         if (counter >= ((uppermatrix * uppermatrix) - bombcount))
         {
@@ -238,24 +235,31 @@ int main()
         scanf("%s", string);
     }
 
+    // Execution time pt. 2
+    gettimeofday(&tv2, NULL);
+
+    int day = (int)tv2.tv_sec;
+
+    int time = (int)(tv2.tv_usec - tv1.tv_usec) / 1000;
+
+    int hours = findHours(time),
+        minutes = findMinutes(time),
+        seconds = findSeconds(time);
+
+
+    // Se a pessoa perdeu, adicionar isso ao seu placar...
     if (gmover == 1)
     {
-
+        updateUser(0, 0, 0, 0, 1);
         printf("\n\n\n\n\nBOOOOOOMMMMMM \nGame Over!!! \n\n\n\n\n");
         return 0;
     }
 
-    // Execution time pt. 2
-    gettimeofday(&tv2, NULL);
-    int time = (double)(tv2.tv_usec - tv1.tv_usec) / 1000000,
-
-        hours = findHours(time),
-        minutes = findMinutes(time),
-        seconds = findSeconds(time);
+    updateUser(time, 10, day, 1, 0);
 
     printf("\n\nParabéns %s! \nTodas as Bombas foram desarmadas!"
            "\n\nStats da partida: \nTempo: %.2i:%.2i:%.2i\nPosição atual no placar: %i° lugar\nPontos totais: %i\n\n",
-           username, hours, minutes, seconds, place, score);
+           username, hours, minutes, seconds, place, pontos);
 
-    // Escrever stats do jogo
+    return 0;
 }

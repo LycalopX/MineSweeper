@@ -1,6 +1,2 @@
 
-LycalopX 0 0 0 0 0
-AlexBWE 0 1232983 0 0 12
-Kennia 0 0 0 0 0
-Romualdo 20391309203 0 0 -1 1209833
-LLycalopX 0 0 0 0 0
+LycalopX 81 20 1719806522 2 4
