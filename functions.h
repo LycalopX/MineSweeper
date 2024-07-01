@@ -1,7 +1,6 @@
 // Importando o arquivo de constantes
 #include "constants.h"
 
-
 // Checa se o começo do string a contém o string b. Bom para comparar as linhas de
 // dados dos jogadores, que começa com o seu nome
 
@@ -14,7 +13,6 @@ int StartsWith(const char *a, const char *b)
     }
     return 0;
 }
-
 
 // Retorna valores aleatórios no intervalo fornecido
 
@@ -33,7 +31,6 @@ int printRandoms(int lower, int upper, int count)
     return 0;
 }
 
-
 // Interface de seleção do modo de jogo
 
 // Altera algumas variáveis que indicam a dificuldade do jogo para o arquivo principal
@@ -47,7 +44,7 @@ void selection()
     do
     {
         printf("\n\nSeja bem-vindo a campo minado!\n"
-               "\nEscolha modo de jogo: \n---------------------------------------------\n1. Fácil \n2. Intermediário \n3. Especialista (20 minutos ou mais de jogo)\n4. Ultranightmare (impossível)\n---------------------------------------------\n\nModo: ");
+               "\nEscolha modo de jogo: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mFácil 💣 \n\x1b[0m2. \033[0;34mIntermediário 🪖 \n\x1b[0m3. \033[0;31mEspecialista 🗡️ (20 minutos ou mais de jogo)\n\x1b[0m4. \033[0;30mUltranightmare 🎖️ (impossível)\n\033[0;36m---------------------------------------------\x1b[0m\n\nModo: ");
         scanf("%i", &x);
 
         loop = 1;
@@ -83,7 +80,6 @@ void selection()
         }
     } while (loop == 0);
 }
-
 
 // Imprimir a matriz atual do tabuleiro (útil para encontrar bugs de programação)
 
@@ -151,7 +147,6 @@ void printOut()
     }
 }
 
-
 // Ler para cada movimento, se as casas ao lado também serão reveladas...
 
 // Importante, além de que depende do tabuleiro já ter sido criado para funcionar.
@@ -190,7 +185,7 @@ void read(int i, int j)
 
     // Essencialmente, a checagem de casas reveladas surgiu da necessidade de garantir que
     // o AI não precisasse revelar a mesma casa mais de uma vez, além de evitar loops
-    
+
     // Por isso, toda a vez que o bloco é checado, ele tem sua propriedade de revealed
     // modificada para 1
 
@@ -348,7 +343,6 @@ void read(int i, int j)
     return;
 };
 
-
 // Dar uma função à cada bloco, e já confirmar a soma de bombas em nos 8 blocos à sua volta
 void setUp(int i, int j)
 {
@@ -439,7 +433,6 @@ void setUp(int i, int j)
     return;
 };
 
-
 // Gera todas as bombas no campo, tendo certeza de não colocá-las em um raio de um bloco do jogador
 // (nos oito à sua volta)
 void GeradorDeCampoDeMinas(int c1, int c2, int i, int j)
@@ -481,7 +474,6 @@ void GeradorDeCampoDeMinas(int c1, int c2, int i, int j)
     }
 }
 
-
 // Quando informado tempo em milisegundos, ele converte para o formato desejado
 int findSeconds(int time)
 {
@@ -518,7 +510,6 @@ int findYears(int time)
     int years = (time / (60 * 60 * 24 * 30 * 12));
     return years;
 }
-
 
 // ESTRUTURA USADA: || username time score date gamesWon gamesLost ||
 
@@ -610,7 +601,6 @@ void freeMatrix(char **Matrix, int height)
     return;
 }
 
-
 int findBiggestScore(char **Matrix, int height)
 {
     int num = 0;
@@ -636,7 +626,6 @@ int findBiggestScore(char **Matrix, int height)
     return index;
 }
 
-
 int findSmallestTime(char **Matrix, int height)
 {
     int num = 0;
@@ -660,7 +649,6 @@ int findSmallestTime(char **Matrix, int height)
 
     return index;
 }
-
 
 void organizeByPoints(int type)
 {
@@ -714,7 +702,7 @@ void organizeByPoints(int type)
         {
             // Vamos achar o maior, e colocá-lo na posição...
             index = findBiggestScore(strings, p);
-              
+
             // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
             if (previousIndex == index)
             {
@@ -727,11 +715,13 @@ void organizeByPoints(int type)
 
             findStats(strings[index]);
 
-            if (!pontos)
+            if (!pontos || !segundos)
             {
+                // Remover da lista que precisa ser checada
+                strcpy(strings[index], "a");
                 continue;
+                j--;
             }
-
 
             printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
                    j + 1, username, segundos, pontos, findDays(dia), findMonths(dia), findYears(dia) + 1969, jganhos, jperdidos);
@@ -774,7 +764,6 @@ void organizeByPoints(int type)
 
     freeMatrix(strings, p);
 }
-
 
 void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
 {
@@ -889,8 +878,8 @@ void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
     freeMatrix(strings, p);
 }
 
-
-void SelectionScreen(int option) {
+void SelectionScreen(int option)
+{
     int loop3, loop2 = 0;
 
     // Repetir até valor coerente...
@@ -910,7 +899,7 @@ void SelectionScreen(int option) {
             {
                 selection();
 
-                printf("\n\nModo de placar: \n---------------------------------------------\n1. Top 10 Tempos \n2. Top 10 Pontuações \n---------------------------------------------\n\nOpção: ");
+                printf("\n\nModo de placar: \n---------------------------------------------\n1. \033[1;30mTop 10 Tempos ⏳\x1b[0m \n2. \033[0;30mTop 10 Pontuações 🏅 \x1b[0m\n---------------------------------------------\n\nOpção: ");
                 scanf("%d", &option);
 
                 // Arquivo
@@ -923,7 +912,7 @@ void SelectionScreen(int option) {
                 }
                 else
                 {
-                    organizeByPoints(option -1);
+                    organizeByPoints(option - 1);
                 }
 
                 printf("\n\nE agora? Gostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
@@ -955,11 +944,10 @@ void SelectionScreen(int option) {
             break;
         }
     } while (loop3 == 0);
-
 }
 
-
-void FileMaker() {
+void FileMaker()
+{
     // Verificador da existência de usuário
     int info;
 
@@ -986,9 +974,9 @@ void FileMaker() {
     }
 }
 
+void AllocateMatrix()
+{
 
-void AllocateMatrix() {
-    
     // Alocando as linhas...
     for (int i = 0; i < uppermatrix; i++)
     {
