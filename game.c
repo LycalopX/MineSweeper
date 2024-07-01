@@ -4,11 +4,9 @@
 
 int main()
 {
-    // Nome de usuário
-    char info[20];
 
     // Stats do usuário
-    int score, place, option, loop, loop2 = 0, loop3 = 0;
+    int score, option, loop;
 
     printf("\n ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
            "   ___                                     _                 _       \n"
@@ -24,106 +22,17 @@ int main()
     printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
     scanf("%d", &option);
 
-    // Repetir até valor coerente...
-    do
-    {
-        loop3 = 1;
+    // Tela de escolher se vai jogar, se vai olhar a leaderboard, etc.
+    SelectionScreen(option);
 
-        switch (option)
-        {
-        case 1:
-            selection();
-            break;
-
-        case 2:
-
-            while (loop2 == 0)
-            {
-                selection();
-
-                printf("\n\nModo de placar: \n---------------------------------------------\n1. Top 10 Tempos \n2. Top 10 Pontuações \n---------------------------------------------\n\nOpção: ");
-                scanf("%d", &option);
-
-                // Arquivo
-                FILE *file = fopen(fileName, "r");
-
-                // Ninguém jogou ainda...
-                if (!file)
-                {
-                    printf("\nNão há pontuações registradas nesse modo de jogo.");
-                }
-                else
-                {
-                    organizeByPoints(option -1);
-                }
-
-                printf("\n\nE agora? Gostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
-                scanf("%d", &option);
-
-                switch (option)
-                {
-                case 1:
-                    selection();
-                    loop2 = 1;
-                case 2:
-                    break;
-                case 3:
-                    printf("\n\nObrigado por jogar conosco!\n\n");
-                    return 0;
-                }
-            }
-
-            break;
-        case 3:
-            printf("\n\nObrigado por jogar conosco!\n\n");
-            return 0;
-
-        default:
-            printf("\nValor inválido! \n\n");
-            loop3 = 0;
-            printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
-            scanf("%d", &option);
-            break;
-        }
-    } while (loop3 == 0);
-
-    // Arquivo
-    FILE *file = fopen(fileName, "r");
-
-    // Abrindo o usuário
-    findUser(username, file, info);
-
-    // Procurando o usuário
-    if (!strcmp("NULL", info))
-    {
-        // Criamos o arquivo
-        FILE *fp = fopen(fileName, "a");
-
-        // Criamos o usuário
-        createUser(username, fp);
-
-        // Arquivo atualizado
-        file = fopen(fileName, "r");
-
-        // Abrindo o usuário
-        findUser(username, file, info);
-    }
+    // Aqui nós temos que ter certeza de que o arquivo existe, e o jogador que acabou de começar o jogo
+    // Isso é necessário para a alteração de seus dados, caso ele vença ou perca afrente.
+    FileMaker();
 
     // Definindo a matriz
     Matrix = malloc(uppermatrix * sizeof(struct block *));
 
-    // Alocando as linhas...
-    for (int i = 0; i < uppermatrix; i++)
-    {
-        Matrix[i] = malloc(uppermatrix * sizeof(struct block));
-
-        for (int j = 0; j < uppermatrix; j++)
-        {
-            Matrix[i][j].revealed = 0;
-            Matrix[i][j].flag = 0;
-            Matrix[i][j].type = 0;
-        }
-    }
+    AllocateMatrix();
 
     // Gerador de seed
     srand(time(0));
@@ -261,8 +170,8 @@ int main()
     updateUser(time, 10, day, 1, 0);
 
     printf("\n\nParabéns %s! \nTodas as Bombas foram desarmadas!"
-           "\n\nStats da partida: \nTempo: %.2i:%.2i:%.2i\nPosição atual no placar: %i° lugar\nPontos totais: %i\n\n",
-           username, hours, minutes, seconds, place, pontos);
+           "\n\nStats da partida: \nTempo: %.2i:%.2i:%.2i\nPontos totais: %i\n\n",
+           username, hours, minutes, seconds, pontos);
 
     return 0;
 }
