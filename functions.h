@@ -468,17 +468,20 @@ int findHours(int time)
     return hours;
 }
 
-int findDays(int time) {
-    int days = (time / (60 * 60 * 24));
+int findDays(int time)
+{
+    int days = (time / (60 * 60 * 24) - 8) % (24);
     return days;
 }
 
-int findMonths(int time) {
-    int months = (time / (60 * 60 * 24 * 30));
+int findMonths(int time)
+{
+    int months = (time / (60 * 60 * 24 * 30) + 4) % (30);
     return months;
 }
 
-int findYears(int time) {
+int findYears(int time)
+{
     int years = (time / (60 * 60 * 24 * 30 * 12));
     return years;
 }
@@ -541,6 +544,7 @@ void findUser(char name[], FILE *file, char info[40])
 
 void findStats(char info[40])
 {
+
     // "LycalopX 0 0 0 0 0"
     char temp_filename[1024];
 
@@ -559,31 +563,179 @@ void findStats(char info[40])
     fscanf(readfile, "%s %i %i %i %i %i", username, &segundos, &pontos, &dia, &jganhos, &jperdidos);
 }
 
-void printLeaderboard(FILE *file)
+// Liberar espaço da matriz
+void freeMatrix(char **Matrix, int height)
 {
 
-    printf("\n\n--------------------------\n");
+    for (int i = 0; i < height; i++)
+    {
+        Matrix[i] = NULL;
+    }
+    Matrix = NULL;
+
+    return;
+}
+
+int findBiggestScore(char **Matrix, int height)
+{
+    int num = 0;
+    int index = 0;
+
+    for (int i = 0; i < height; i++)
+    {
+        if (strlen(Matrix[i]) < 5)
+        {
+            continue;
+        }
+
+        // Quando o string está vazio, ele muda o valor de segundos para 0
+        findStats(Matrix[i]);
+
+        if (pontos > num)
+        {
+            index = i;
+            num = pontos;
+        }
+    }
+
+    return index;
+}
+
+int findSmallestTime(char **Matrix, int height)
+{
+    int num = 0;
+    int index = 0;
+
+    for (int i = 0; i < height; i++)
+    {
+        if (strlen(Matrix[i]) < 5)
+        {
+            continue;
+        }
+
+        findStats(Matrix[i]);
+
+        if (segundos < num || num == 0)
+        {
+            index = i;
+            num = segundos;
+        }
+    }
+
+    return index;
+}
+
+void organizeByPoints(int type)
+{
+
+    int i = 0, p = 0, index = 0, previousIndex = -1;
+
+    // Arquivo
+    FILE *file = fopen(fileName, "r");
 
     // Extrair todos os jogadores
     char linha[40];
 
-    // Pular primeira linha
-    fgets(linha, 40, file);
+    char **strings = NULL;
 
-    // LER - Linha por linha
-    for (int i = 1; fgets(linha, 40, file) != NULL; i++)
+    if (file == NULL)
     {
-        findStats(linha);
+        printf("\n Não foi possível organizar a leaderboard!! :o");
+    }
 
-        if (!segundos) {
-            continue;
+    strings = malloc(sizeof(char *));
+
+    if (strings == NULL)
+    {
+        printf("Memory allocation failed\n");
+    }
+
+    // Essa função serve o propósito de criar uma nova matriz com todos os dados organizados
+    // de todos os primeiros 10 usuários, dependendo da categoria usada
+
+    // Alocação dinâmica é necessária!
+    for (i = 0; fgets(linha, sizeof(linha), file) != NULL; i++)
+    {
+        p = i + 1;
+
+        // Alocar memória para cada string que usamos
+        strings[i] = (char *)malloc((41) * sizeof(char));
+
+        // Para criar a matriz...
+        strcpy(strings[i], linha);
+    }
+
+    // Não precisamos mais do arquivo aberto
+    fclose(file);
+
+    printf("\n\n--------------------------\n");
+
+    // Agora vamos comparar todos
+    for (int j = 0; j < p - 1; j++)
+    {
+        if (type)
+        {
+            // Vamos achar o maior, e colocá-lo na posição...
+            index = findBiggestScore(strings, p);
+              
+            // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
+            if (previousIndex == index)
+            {
+                break;
+            }
+            else
+            {
+                previousIndex = index;
+            }
+
+            findStats(strings[index]);
+
+            if (!pontos)
+            {
+                continue;
+            }
+
+
+            printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
+                   j + 1, username, segundos, pontos, findDays(dia), findMonths(dia), findYears(dia) + 1969, jganhos, jperdidos);
+
+            // Remover da lista que precisa ser checada
+            strcpy(strings[index], "a");
         }
+        else
+        {
+            // Vamos achar o menor tempo, e colocá-lo na posição...
+            index = findSmallestTime(strings, p);
 
-        printf("\n    %s: \nTempo: %is Pontuação: %i\nDia: %i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
-               username, segundos, pontos, dia, jganhos, jperdidos);
+            // Para ter certeza de que o menor tempo não está se repetindo
+            if (previousIndex == index)
+            {
+                break;
+            }
+            else
+            {
+                previousIndex = index;
+            }
+
+            // Achando os dados
+            findStats(strings[index]);
+
+            if (!segundos)
+            {
+                continue;
+            }
+
+            printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
+                   j + 1, username, segundos, pontos, findDays(dia), findMonths(dia), findYears(dia) + 1969, jganhos, jperdidos);
+
+            // Remover da lista que precisa ser checada
+            strcpy(strings[index], "a");
+        }
     }
 
     printf("--------------------------");
+
+    freeMatrix(strings, p);
 }
 
 void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
@@ -606,7 +758,6 @@ void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
     char **strings = NULL;
 
     strings = malloc(sizeof(char *));
-    ;
 
     if (strings == NULL)
     {
@@ -696,4 +847,6 @@ void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
     };
 
     fclose(writefile);
+
+    freeMatrix(strings, p);
 }

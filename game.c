@@ -41,6 +41,9 @@ int main()
             {
                 selection();
 
+                printf("\n\nModo de placar: \n---------------------------------------------\n1. Top 10 Tempos \n2. Top 10 Pontuações \n---------------------------------------------\n\nOpção: ");
+                scanf("%d", &option);
+
                 // Arquivo
                 FILE *file = fopen(fileName, "r");
 
@@ -51,7 +54,7 @@ int main()
                 }
                 else
                 {
-                    printLeaderboard(file);
+                    organizeByPoints(option -1);
                 }
 
                 printf("\n\nE agora? Gostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
