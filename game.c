@@ -5,16 +5,22 @@
 int main()
 {
 
+    // Execution time pt. 1
+    struct timeval t0, t1;
+    gettimeofday(&t0, 0);
+
+    system("clear");
+
     // Stats do usuário
     int score, option, loop;
 
     printf("\n \033[0;36m‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\x1b[0m\n"
-           "   \033[1;30m___                                     _                 _       \n"
+           "   \033[1;34m___                                     _                 _       \n"
            "  / __\\__ _ _ __ ___  _ __   ___     /\\/\\ (_)_ __   __ _  __| | ___  \n"
            " / /  / _` | '_ ` _ \\| '_ \\ / _ \\   /    \\| | '_ \\ / _` |/ _` |/ _ \\ \n"
            "/ /__| (_| | | | | | | |_) | (_) | / /\\/\\ \\ | | | | (_| | (_| | (_) |\n"
            "\\____/\\__,_|_| |_| |_| .__/ \\___/  \\/    \\/_|_| |_|\\__,_|\\__,_|\\___/ \n"
-           "                     |_|\033[1;30m                                             \n"
+           "                     |_|\033[1;34m                                           \n"
            "\n \033[0;36m_____________________________________________________________________\x1b[0m \n\nNome de usuário (sem espaços): ");
 
     scanf("%s", username);
@@ -40,10 +46,6 @@ int main()
     // Definindo tudo que precisaremos para o início do jogo
     int gmover = 0;
     char string[9] = "";
-
-    // Execution time pt. 1
-    struct timeval tv1, tv2;
-    gettimeofday(&tv1, NULL);
 
     // p =/ 0, game over :d
     while (gmover == 0)
@@ -148,11 +150,11 @@ int main()
     }
 
     // Execution time pt. 2
-    gettimeofday(&tv2, NULL);
+    gettimeofday(&t1, NULL);
 
-    int day = (int)tv2.tv_sec;
+    int day = (int)(t1.tv_sec);
 
-    int time = (int)(tv2.tv_usec - tv1.tv_usec) / 1000;
+    int time = (int) ( (t1.tv_sec - t0.tv_sec) );
 
     int hours = findHours(time),
         minutes = findMinutes(time),

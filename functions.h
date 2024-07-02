@@ -501,7 +501,7 @@ int findDays(int time)
 
 int findMonths(int time)
 {
-    int months = (time / (60 * 60 * 24 * 30) + 4) % (30);
+    int months = (time / (60 * 60 * 24 * 30) + 4) % (12);
     return months;
 }
 
@@ -653,7 +653,10 @@ int findSmallestTime(char **Matrix, int height)
 void organizeByPoints(int type)
 {
 
-    int i = 0, p = 0, index = 0, previousIndex = -1;
+    int i = 0, p = 0, index = 0;
+
+    // Checa se o usuário é o mesmo da última iteração
+    char previousIndex[20];
 
     // Arquivo
     FILE *file = fopen(fileName, "r");
@@ -703,24 +706,24 @@ void organizeByPoints(int type)
             // Vamos achar o maior, e colocá-lo na posição...
             index = findBiggestScore(strings, p);
 
+            findStats(strings[index]);
+
             // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
-            if (previousIndex == index)
+            if (!strcmp(username, previousIndex))
             {
                 break;
             }
             else
             {
-                previousIndex = index;
+                strcpy(previousIndex, username);
             }
 
-            findStats(strings[index]);
-
-            if (!pontos || !segundos)
+            if (!pontos)
             {
                 // Remover da lista que precisa ser checada
                 strcpy(strings[index], "a");
-                continue;
                 j--;
+                continue;
             }
 
             printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
@@ -734,21 +737,24 @@ void organizeByPoints(int type)
             // Vamos achar o menor tempo, e colocá-lo na posição...
             index = findSmallestTime(strings, p);
 
-            // Para ter certeza de que o menor tempo não está se repetindo
-            if (previousIndex == index)
+            // Achando os dados
+            findStats(strings[index]);
+
+            // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
+            if (!strcmp(username, previousIndex))
             {
                 break;
             }
             else
             {
-                previousIndex = index;
+                strcpy(previousIndex, username);
             }
-
-            // Achando os dados
-            findStats(strings[index]);
 
             if (!segundos)
             {
+                // Remover da lista que precisa ser checada
+                strcpy(strings[index], "a");
+                j--;
                 continue;
             }
 
