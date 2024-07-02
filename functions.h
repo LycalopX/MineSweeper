@@ -996,3 +996,147 @@ void AllocateMatrix()
         }
     }
 }
+
+// Passamos como ponteiro o índice de gameover do jogo...
+
+// Ele é importante, pois informa se, depois de acabar a função, isso ocorreu
+// devido ao jogador ganhar ou perder o jogo, sendo gmover = 1, se ele perdeu
+
+// Assim, foi definida a função play para inicializar todos os protocolos e as
+// checagens que formam o jogo, depois do usuário fornecer todas as
+// informações necessárias
+void play(int *pointer)
+{
+
+    // Definindo tudo que precisaremos para o início do jogo
+    char string[9] = "";
+    int gmover = *pointer;
+
+    // p =/ 0, game over :d
+    while (gmover == 0)
+    {
+
+        // Quando o usuário forneceu um input
+        if (string[0])
+        {
+
+            int j = 0, fc = 0;
+
+            // Checando se vc nao simplesmente quebra tudo kkkkkkkkkk
+            int length = (int)strlen(string);
+
+            if (StartsWith(string, "flag"))
+            {
+                fc = 4;
+            }
+            if (StartsWith(string, "unflag"))
+            {
+                fc = 6;
+            }
+
+            for (int i = length - 1; i > fc; i--)
+            {
+                j += (((int)(string[i] - '0')) * pow(10, length - 1 - i));
+            }
+
+            // Descobrindo o que ele acabou de fornecer...
+            char *a = alphabet;
+            char *e;
+
+            e = strchr(a, string[fc]);
+            int i = (int)(e - a);
+
+            if (StartsWith(string, "flag"))
+            {
+                Matrix[i][j].flag = 1;
+
+                printOut();
+
+                printf("\nPosição a revelar: ");
+                scanf("%s", string);
+
+                continue;
+            }
+            if (StartsWith(string, "unflag"))
+            {
+                Matrix[i][j].flag = 0;
+
+                printOut();
+
+                printf("\nPosição a revelar: ");
+                scanf("%s", string);
+                continue;
+            }
+
+            if (i < 0 || j < 0 || i > uppermatrix || j > uppermatrix)
+            {
+
+                printf("\nValor inválido\n");
+
+                printf("\nPosição a revelar: ");
+                scanf("%s", string);
+
+                continue;
+            }
+
+            if (counter == 0)
+            {
+                int c1, c2;
+
+                GeradorDeCampoDeMinas(c1, c2, i, j);
+            }
+
+            // Checando onde ele pisou
+            if (Matrix[i][j].type == 9)
+            {
+                gmover = 1;
+                continue;
+            }
+            else
+            {
+                read(i, j);
+            }
+        }
+
+        // Printing out the Matrix
+        printOut();
+
+        if (counter >= ((uppermatrix * uppermatrix) - bombcount))
+        {
+            break;
+        }
+        else if (!counter)
+        {
+            printf("\nExemplo: A0");
+        }
+
+        printf("\nPosição a revelar: ");
+        scanf("%s", string);
+    }
+}
+
+void ContinuarJogandoScreen(int *loop)
+{
+    int option = 0;
+
+    printf("\n\nGostaria de continuar jogando ou sair? \n1. Continuar jogando \n2. Sair \n\nOpção: ");
+
+    scanf("%d", &option);
+
+    while (option != 1 && option != 2)
+    {
+        switch (option)
+        {
+        case 1:
+            // Nothing happens :/
+            break;
+        case 2:
+            printf("\n\nObrigado por jogar!");
+            *loop = 1;
+            break;
+        default:
+            printf("Valor inválido bro");
+            break;
+        }
+    }
+}
