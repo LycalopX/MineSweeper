@@ -1,10 +1,12 @@
 // Importando o arquivo de constantes
 #include "constants.h"
 
-// Checa se o começo do string a contém o string b. Bom para comparar as linhas de
-// dados dos jogadores, que começa com o seu nome
+/*
+Checa se o começo do string a contém o string b. Bom para comparar as linhas de
+dados dos jogadores, que começa com o seu nome
 
-// Exemplo: LycalopX 0 0 0 0 0
+Exemplo: LycalopX 0 0 0 0 0
+*/
 int StartsWith(const char *a, const char *b)
 {
     if (strncmp(a, b, strlen(b)) == 0)
@@ -14,9 +16,11 @@ int StartsWith(const char *a, const char *b)
     return 0;
 }
 
-// Retorna valores aleatórios no intervalo fornecido
+/*
+Retorna valores aleatórios no intervalo fornecido
 
-// Usado para criar as bombas no mapa do jogo
+Usado para criar as bombas no mapa do jogo
+*/
 int printRandoms(int lower, int upper, int count)
 {
 
@@ -31,47 +35,56 @@ int printRandoms(int lower, int upper, int count)
     return 0;
 }
 
-// Interface de seleção do modo de jogo
+/*
+Interface de seleção do modo de jogo
 
-// Altera algumas variáveis que indicam a dificuldade do jogo para o arquivo principal
-// criar o tabuleiro (i.e. quantidade de bombas, tamanho da matriz, etc...)
-void selection()
+Altera algumas variáveis que indicam a dificuldade do jogo para o arquivo principal
+criar o tabuleiro (i.e. quantidade de bombas, tamanho da matriz, etc...)
+*/
+void selection(int *pointer1, int *pointer2, char fileName[11])
 {
+    // Retoma os ponteiros, para armazenar o tamanho da matriz
+    // e a quantidade de bombas selecionado pelo usuário
 
+    int option;
+
+    // Assegurar que uma dificuldade seja escolhida
     int loop = 1;
 
     // Escolher modo de jogo
     do
     {
+        // Selecionar modo de jogo
         printf("\n\nSeja bem-vindo a campo minado!\n"
                "\nEscolha modo de jogo: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mFácil 💣 \n\x1b[0m2. \033[0;34mIntermediário 🪖 \n\x1b[0m3. \033[0;31mEspecialista 🗡️ (20 minutos ou mais de jogo)\n\x1b[0m4. \033[0;30mUltranightmare 🎖️ (impossível)\n\033[0;36m---------------------------------------------\x1b[0m\n\nModo: ");
-        scanf("%i", &x);
+        scanf("%i", &option);
 
         loop = 1;
 
-        switch (x)
+        // Opções escolhidas pelo usuário
+        switch (option)
         {
         case 1:
-            uppermatrix = 9;
-            bombcount = 10;
+            *pointer1 = 9;
+            *pointer2 = 10;
             strcpy(fileName, "stats1.txt");
             break;
 
         case 2:
-            uppermatrix = 16;
-            bombcount = 40;
+            *pointer1 = 16;
+            *pointer2 = 40;
             strcpy(fileName, "stats2.txt");
             break;
 
         case 3:
-            uppermatrix = 30;
-            bombcount = 99;
+            *pointer1 = 30;
+            *pointer2 = 99;
             strcpy(fileName, "stats3.txt");
             break;
 
         case 4:
-            uppermatrix = 81;
-            bombcount = 729;
+            *pointer1 = 81;
+            *pointer2 = 729;
             break;
 
         default:
@@ -81,11 +94,14 @@ void selection()
     } while (loop == 0);
 }
 
-// Imprimir a matriz atual do tabuleiro (útil para encontrar bugs de programação)
+/*
+Imprimir a matriz atual do tabuleiro (útil para encontrar bugs de programação)
 
-// Usado toda a vez que o usuário faz um movimento
-void printOut()
+Usado toda a vez que o usuário faz um movimento
+*/
+void printOut(int *pointer1, struct block **Matrix)
 {
+    int uppermatrix = *pointer1;
 
     // Números
     printf("\n ");
@@ -147,10 +163,14 @@ void printOut()
     }
 }
 
-// Ler para cada movimento, se as casas ao lado também serão reveladas...
+/*
+Ler para cada movimento, se as casas ao lado também serão reveladas...
 
-// Importante, além de que depende do tabuleiro já ter sido criado para funcionar.
-void read(int i, int j)
+Importante, além de que depende do tabuleiro já ter sido criado para funcionar.
+
+Sintaxe: i, j, uppermatrix, counter, Matrix
+*/
+void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
 {
 
     // Se existe uma coordenada das matriz em uma das direções
@@ -169,7 +189,8 @@ void read(int i, int j)
     else if (Matrix[i][j].type != 0 && Matrix[i][j].type != 9)
     {
         Matrix[i][j].revealed = 1;
-        counter++;
+        (*pointer2)++;
+        
 
         return;
     }
@@ -180,7 +201,8 @@ void read(int i, int j)
     else
     {
         Matrix[i][j].revealed = 1;
-        counter++;
+        (*pointer2)++;
+        
     }
 
     // Essencialmente, a checagem de casas reveladas surgiu da necessidade de garantir que
@@ -203,12 +225,14 @@ void read(int i, int j)
             {
                 if (upleft.type == 0)
                 {
-                    read(i - 1, (j - 1));
+                    read(i - 1, (j - 1), uppermatrix, pointer2, Matrix);
                 }
                 else
                 {
                     Matrix[i - 1][j - 1].revealed = 1;
-                    counter++;
+                    (*pointer2)++;
+
+                    
                 }
             }
         }
@@ -222,12 +246,13 @@ void read(int i, int j)
             {
                 if (downleft.type == 0)
                 {
-                    read(i + 1, (j - 1));
+                    read(i + 1, (j - 1), uppermatrix, pointer2, Matrix);
                 }
                 else
                 {
                     Matrix[i + 1][j - 1].revealed = 1;
-                    counter++;
+                    (*pointer2)++;
+                    
                 }
             }
         }
@@ -237,12 +262,13 @@ void read(int i, int j)
         {
             if (left.type == 0)
             {
-                read(i, (j - 1));
+                read(i, (j - 1), uppermatrix, pointer2, Matrix);
             }
             else
             {
                 Matrix[i][j - 1].revealed = 1;
-                counter++;
+                (*pointer2)++;
+                
             }
         }
     }
@@ -260,12 +286,13 @@ void read(int i, int j)
             {
                 if (upright.type == 0)
                 {
-                    read(i - 1, (j + 1));
+                    read(i - 1, (j + 1), uppermatrix, pointer2, Matrix);
                 }
                 else
                 {
                     Matrix[i - 1][j + 1].revealed = 1;
-                    counter++;
+                    (*pointer2)++;
+                    
                 }
             }
         }
@@ -278,12 +305,13 @@ void read(int i, int j)
             {
                 if (downright.type == 0)
                 {
-                    read(i + 1, (j + 1));
+                    read(i + 1, (j + 1), uppermatrix, pointer2, Matrix);
                 }
                 else
                 {
                     Matrix[i + 1][j + 1].revealed = 1;
-                    counter++;
+                    (*pointer2)++;
+                    
                 }
             }
         }
@@ -292,12 +320,13 @@ void read(int i, int j)
         {
             if (right.type == 0)
             {
-                read(i, j + 1);
+                read(i, j + 1, uppermatrix, pointer2, Matrix);
             }
             else
             {
                 Matrix[i][j + 1].revealed = 1;
-                counter++;
+                (*pointer2)++;
+                
             }
         }
     }
@@ -311,12 +340,13 @@ void read(int i, int j)
         {
             if (up.type == 0)
             {
-                read(i - 1, j);
+                read(i - 1, j, uppermatrix, pointer2, Matrix);
             }
             else
             {
                 Matrix[i - 1][j].revealed = 1;
-                counter++;
+                (*pointer2)++;
+                
             }
         }
     }
@@ -330,12 +360,13 @@ void read(int i, int j)
         {
             if (down.type == 0)
             {
-                read(i + 1, j);
+                read(i + 1, j, uppermatrix, pointer2, Matrix);
             }
             else
             {
                 Matrix[i + 1][j].revealed = 1;
-                counter++;
+                (*pointer2)++;
+                
             }
         }
     }
@@ -344,8 +375,11 @@ void read(int i, int j)
 };
 
 // Dar uma função à cada bloco, e já confirmar a soma de bombas em nos 8 blocos à sua volta
-void setUp(int i, int j)
+// Sintaxe: i, j, uppermatrix, Matrix
+void setUp(int i, int j, int *pointer1, struct block **Matrix)
 {
+    int uppermatrix = *pointer1;
+
     // Condições para blocos existirem
     int conditionup = (i - 1) >= 0;
     int conditiondown = i + 1 < uppermatrix;
@@ -433,17 +467,21 @@ void setUp(int i, int j)
     return;
 };
 
-// Gera todas as bombas no campo, tendo certeza de não colocá-las em um raio de um bloco do jogador
-// (nos oito à sua volta)
-void GeradorDeCampoDeMinas(int c1, int c2, int i, int j)
+/*
+Gera todas as bombas no campo, tendo certeza de não colocá-las em um raio de um bloco do jogador
+(nos oito à sua volta)
+*/
+void GeradorDeCampoDeMinas(int c1, int c2, int i, int j, int *pointer1, int *pointer2, struct block **Matrix)
 {
+    int uppermatrix = *pointer1;
+    int bombcount = *pointer2;
 
     // Mapeando bombas
     for (int n = 0; n < bombcount;)
     {
 
-        c1 = printRandoms(lowermatrix, uppermatrix - 1, bombcount);
-        c2 = printRandoms(lowermatrix, uppermatrix - 1, bombcount);
+        c1 = printRandoms(0, uppermatrix - 1, bombcount);
+        c2 = printRandoms(0, uppermatrix - 1, bombcount);
 
         // Tendo certeza de que não estamos colocando uma bomba duplicata, assim como não criando uma bomba
         // no lugar onde já foi revelado (i,j)
@@ -469,7 +507,7 @@ void GeradorDeCampoDeMinas(int c1, int c2, int i, int j)
                 continue;
             }
 
-            setUp(i, j);
+            setUp(i, j, pointer1, Matrix);
         }
     }
 }
@@ -511,10 +549,12 @@ int findYears(int time)
     return years;
 }
 
-// ESTRUTURA USADA: || username time score date gamesWon gamesLost ||
+/*
+ESTRUTURA USADA: || username time score date gamesWon gamesLost ||
 
-// Cria usuário do jogo no arquivo de estatísticas escolhido
-void createUser(FILE *file)
+Cria usuário do jogo no arquivo de estatísticas escolhido
+*/
+void createUser(FILE *file, char username[20])
 {
     // Extrair todos os jogadores
     char linha[40];
@@ -540,7 +580,7 @@ void createUser(FILE *file)
 }
 
 // Procura usuário do jogo
-int findUser(FILE *file)
+int findUser(FILE *file, char username[20])
 {
     if (file == NULL)
     {
@@ -567,7 +607,8 @@ int findUser(FILE *file)
     return 0;
 }
 
-void findStats(char info[40])
+void findStats(char info[40], char fileName[11], char username[20],
+               int *segundos, int *pontos, int *dia, int *jganhos, int *jperdidos)
 {
 
     // "LycalopX 0 0 0 0 0"
@@ -585,7 +626,7 @@ void findStats(char info[40])
     // Ler saporra
     FILE *readfile = fopen(temp_filename, "r");
 
-    fscanf(readfile, "%s %i %i %i %i %i", username, &segundos, &pontos, &dia, &jganhos, &jperdidos);
+    fscanf(readfile, "%s %i %i %i %i %i", username, segundos, pontos, dia, jganhos, jperdidos);
 }
 
 // Liberar espaço da matriz
@@ -601,7 +642,9 @@ void freeMatrix(char **Matrix, int height)
     return;
 }
 
-int findBiggestScore(char **Matrix, int height)
+int findBiggestScore(char **Matrix, int height, char fileName[11], char username[20],
+                     int *segundos, int *pontos, int *dia, int *jganhos, int *jperdidos)
+
 {
     int num = 0;
     int index = 0;
@@ -614,19 +657,21 @@ int findBiggestScore(char **Matrix, int height)
         }
 
         // Quando o string está vazio, ele muda o valor de segundos para 0
-        findStats(Matrix[i]);
+        findStats(Matrix[i], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
 
-        if (pontos > num)
+        if (*pontos > num)
         {
             index = i;
-            num = pontos;
+            num = *pontos;
         }
     }
 
     return index;
 }
 
-int findSmallestTime(char **Matrix, int height)
+int findSmallestTime(char **Matrix, int height, char fileName[11], char username[20],
+                     int *segundos, int *pontos, int *dia, int *jganhos, int *jperdidos)
+
 {
     int num = 0;
     int index = 0;
@@ -638,19 +683,20 @@ int findSmallestTime(char **Matrix, int height)
             continue;
         }
 
-        findStats(Matrix[i]);
+        findStats(Matrix[i], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
 
-        if ((segundos < num || num == 0) && segundos != 0)
+        if ((*segundos < num || num == 0) && *segundos != 0)
         {
             index = i;
-            num = segundos;
+            num = *segundos;
         }
     }
 
     return index;
 }
 
-void organizeByPoints(int type)
+void organizeByPoints(int type, char fileName[20], char username[20],
+                      int *segundos, int *pontos, int *dia, int *jganhos, int *jperdidos)
 {
 
     int i = 0, p = 0, index = 0;
@@ -704,9 +750,9 @@ void organizeByPoints(int type)
         if (type)
         {
             // Vamos achar o maior, e colocá-lo na posição...
-            index = findBiggestScore(strings, p);
+            index = findBiggestScore(strings, p, fileName, username, segundos, pontos, dia, jganhos, jperdidos);
 
-            findStats(strings[index]);
+            findStats(strings[index], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
 
             // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
             if (!strcmp(username, previousIndex))
@@ -727,7 +773,7 @@ void organizeByPoints(int type)
             }
 
             printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
-                   j + 1, username, segundos, pontos, findDays(dia), findMonths(dia), findYears(dia) + 1969, jganhos, jperdidos);
+                   j + 1, username, *segundos, *pontos, findDays(*dia), findMonths(*dia), findYears(*dia) + 1969, *jganhos, *jperdidos);
 
             // Remover da lista que precisa ser checada
             strcpy(strings[index], "a");
@@ -735,10 +781,10 @@ void organizeByPoints(int type)
         else
         {
             // Vamos achar o menor tempo, e colocá-lo na posição...
-            index = findSmallestTime(strings, p);
+            index = findSmallestTime(strings, p, fileName, username, segundos, pontos, dia, jganhos, jperdidos);
 
             // Achando os dados
-            findStats(strings[index]);
+            findStats(strings[index], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
 
             // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
             if (!strcmp(username, previousIndex))
@@ -750,7 +796,7 @@ void organizeByPoints(int type)
                 strcpy(previousIndex, username);
             }
 
-            if (!segundos)
+            if (!*segundos)
             {
                 // Remover da lista que precisa ser checada
                 strcpy(strings[index], "a");
@@ -759,7 +805,7 @@ void organizeByPoints(int type)
             }
 
             printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
-                   j + 1, username, segundos, pontos, findDays(dia), findMonths(dia), findYears(dia) + 1969, jganhos, jperdidos);
+                   j + 1, username, *segundos, *pontos, findDays(*dia), findMonths(*dia), findYears(*dia) + 1969, *jganhos, *jperdidos);
 
             // Remover da lista que precisa ser checada
             strcpy(strings[index], "a");
@@ -771,7 +817,14 @@ void organizeByPoints(int type)
     freeMatrix(strings, p);
 }
 
-void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
+// Muitas variáveis, pois há muita coisa a ser passada...
+
+// Sintaxe: newTime, score, newDay, ganhos, perdas, fileName, username, segundos, pontos, dia, jganhos, jperdidos
+void updateUser(
+    int newTime, int score, int newDay, int ganhos, int perdas,
+    char fileName[11], char username[20],
+    int *pointer1, int *pointer2, int *pointer3, int *pointer4, int *pointer5)
+
 {
 
     int p, i;
@@ -817,16 +870,16 @@ void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
         // Agora precisamos escrever na "nova linha" os novos dados de jogador!
         if (StartsWith(linha, username))
         {
-            findStats(linha);
+            findStats(linha, fileName, username, pointer1, pointer2, pointer3, pointer4, pointer5);
 
-            if (segundos > newTime || segundos == 0)
+            if (*pointer1 > newTime || *pointer1 == 0)
             {
-                segundos = newTime;
-                dia = newDay;
+                *pointer1 = newTime;
+                *pointer3 = newDay;
             }
-            pontos = pontos + score;
-            jganhos = jganhos + ganhos;
-            jperdidos = jperdidos + perdas;
+            *pointer2 = *pointer2 + score;
+            *pointer4 = *pointer4 + ganhos;
+            *pointer5 = *pointer5 + perdas;
 
             char charNumber[20];
 
@@ -837,27 +890,27 @@ void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
 
             // Usaremos o mesmo string (charNumber) para transformar de int para char...
 
-            sprintf(charNumber, "%d", segundos);
+            sprintf(charNumber, "%d", *pointer1);
 
             strcat(strings[i], charNumber);
             strcat(strings[i], " ");
 
-            sprintf(charNumber, "%d", pontos);
+            sprintf(charNumber, "%d", *pointer2);
 
             strcat(strings[i], charNumber);
             strcat(strings[i], " ");
 
-            sprintf(charNumber, "%d", dia);
+            sprintf(charNumber, "%d", *pointer3);
 
             strcat(strings[i], charNumber);
             strcat(strings[i], " ");
 
-            sprintf(charNumber, "%d", jganhos);
+            sprintf(charNumber, "%d", *pointer4);
 
             strcat(strings[i], charNumber);
             strcat(strings[i], " ");
 
-            sprintf(charNumber, "%d", jperdidos);
+            sprintf(charNumber, "%d", *pointer5);
 
             strcat(strings[i], charNumber);
             strcat(strings[i], "\n");
@@ -884,8 +937,14 @@ void updateUser(int newTime, int score, int newDay, int ganhos, int perdas)
     freeMatrix(strings, p);
 }
 
-void SelectionScreen(int option)
+void SelectionScreen(int option, char fileName[11], int *uppermatrix, int *bombcount,
+                     char username[20], int *segundos, int *pontos, int *dia, int *jganhos, int *jperdidos)
 {
+    // Caso tenha sido selecionado: jogar ou ver placar, ele age com base nessas duas escolhas
+    // Case 1 é o caso da pessoa ter escolhido jogar
+    // Case 2 é o caso da pessoa ter escolhido placar
+    // Case 3 é o caso da pessoa ter escolhido sair do jogo
+
     int loop3, loop2 = 0;
 
     // Repetir até valor coerente...
@@ -896,19 +955,23 @@ void SelectionScreen(int option)
         switch (option)
         {
         case 1:
-            selection();
+            // Leva à tela de seleção da dificuldade, para jogar
+            selection(uppermatrix, bombcount, fileName);
             break;
 
         case 2:
 
             while (loop2 == 0)
             {
-                selection();
 
+                // Leva à tela de seleção da dificuldade, para ver a leaderboard
+                selection(uppermatrix, bombcount, fileName);
+
+                // Imprime as opções de placar (por tempo ou pontuação)
                 printf("\n\nModo de placar: \n---------------------------------------------\n1. \033[1;30mTop 10 Tempos ⏳\x1b[0m \n2. \033[0;30mTop 10 Pontuações 🏅 \x1b[0m\n---------------------------------------------\n\nOpção: ");
                 scanf("%d", &option);
 
-                // Arquivo
+                // Arquivo em que estão armazenadas as estatísticas
                 FILE *file = fopen(fileName, "r");
 
                 // Ninguém jogou ainda...
@@ -916,18 +979,25 @@ void SelectionScreen(int option)
                 {
                     printf("\nNão há pontuações registradas nesse modo de jogo.");
                 }
+
+                // Inicia protocolo de achar os top 10 melhores jogadores e imprimir um a um
+                // suas estaísticas
                 else
                 {
-                    organizeByPoints(option - 1);
+                    organizeByPoints(option - 1, fileName, username, segundos, pontos, dia, jganhos, jperdidos);
                 }
+
+                // Depois que isso se encerrou, ele pergunta novamente
 
                 printf("\n\nE agora? Gostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
                 scanf("%d", &option);
 
+                // Usa a mesma variável para o case
+
                 switch (option)
                 {
                 case 1:
-                    selection();
+                    selection(uppermatrix, bombcount, fileName);
                     loop2 = 1;
                 case 2:
                     break;
@@ -939,10 +1009,13 @@ void SelectionScreen(int option)
 
             break;
         case 3:
+
+            // Sair do jogo
             printf("\n\nObrigado por jogar conosco!\n\n");
             return;
 
         default:
+            // Mesma pergunta de novo, até que a pessoa digite 1-3
             printf("\nValor inválido! \n\n");
             loop3 = 0;
             printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
@@ -952,7 +1025,7 @@ void SelectionScreen(int option)
     } while (loop3 == 0);
 }
 
-void FileMaker()
+void FileMaker(char fileName[11], char username[20])
 {
     // Verificador da existência de usuário
     int info;
@@ -961,7 +1034,7 @@ void FileMaker()
     FILE *file = fopen(fileName, "r");
 
     // Caso findUser seja 1, o jogador existe, se for 0, ele tem de ser criado
-    info = findUser(file);
+    info = findUser(file, username);
 
     // Procurando o usuário
     if (!info)
@@ -970,18 +1043,20 @@ void FileMaker()
         FILE *fp = fopen(fileName, "a");
 
         // Criamos o usuário
-        createUser(fp);
+        createUser(fp, username);
 
         // Arquivo atualizado
         file = fopen(fileName, "r");
 
         // Abrindo o usuário
-        info = findUser(file);
+        info = findUser(file, username);
     }
 }
 
-void AllocateMatrix()
+// Alocar todo o espaço e configurar as matrizes
+void AllocateMatrix(int *pointer1, struct block **Matrix)
 {
+    int uppermatrix = *pointer1;
 
     // Alocando as linhas...
     for (int i = 0; i < uppermatrix; i++)
@@ -1002,15 +1077,21 @@ void AllocateMatrix()
 // Ele é importante, pois informa se, depois de acabar a função, isso ocorreu
 // devido ao jogador ganhar ou perder o jogo, sendo gmover = 1, se ele perdeu
 
-// Assim, foi definida a função play para inicializar todos os protocolos e as
-// checagens que formam o jogo, depois do usuário fornecer todas as
-// informações necessárias
-void play(int *pointer)
+/*
+Assim, foi definida a função play para inicializar todos os protocolos e as
+checagens que formam o jogo, depois do usuário fornecer todas as
+informações necessárias
+
+Sintaxe: gmover, uppermatrix, counter, bombcount, Matrix
+*/
+void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct block **Matrix)
 {
 
     // Definindo tudo que precisaremos para o início do jogo
     char string[9] = "";
     int gmover = *pointer;
+    int uppermatrix = *pointer2;
+    int bombcount = *pointer4;
 
     // p =/ 0, game over :d
     while (gmover == 0)
@@ -1050,7 +1131,7 @@ void play(int *pointer)
             {
                 Matrix[i][j].flag = 1;
 
-                printOut();
+                printOut(pointer2, Matrix);
 
                 printf("\nPosição a revelar: ");
                 scanf("%s", string);
@@ -1061,7 +1142,7 @@ void play(int *pointer)
             {
                 Matrix[i][j].flag = 0;
 
-                printOut();
+                printOut(pointer2, Matrix);
 
                 printf("\nPosição a revelar: ");
                 scanf("%s", string);
@@ -1079,33 +1160,33 @@ void play(int *pointer)
                 continue;
             }
 
-            if (counter == 0)
+            if ((*pointer3) == 0)
             {
                 int c1, c2;
 
-                GeradorDeCampoDeMinas(c1, c2, i, j);
+                GeradorDeCampoDeMinas(c1, c2, i, j, pointer2, pointer4, Matrix);
             }
 
             // Checando onde ele pisou
             if (Matrix[i][j].type == 9)
             {
-                gmover = 1;
-                continue;
+                (*pointer) = 1;
+                break;
             }
             else
             {
-                read(i, j);
+                read(i, j, uppermatrix, pointer3, Matrix);
             }
         }
 
         // Printing out the Matrix
-        printOut();
+        printOut(pointer2, Matrix);
 
-        if (counter >= ((uppermatrix * uppermatrix) - bombcount))
+        if ((*pointer3) >= ((uppermatrix * uppermatrix) - bombcount))
         {
             break;
         }
-        else if (!counter)
+        else if (!(*pointer3))
         {
             printf("\nExemplo: A0");
         }
@@ -1115,16 +1196,17 @@ void play(int *pointer)
     }
 }
 
+// Tela para sair do jogo ou continuar jogando
 void ContinuarJogandoScreen(int *loop)
 {
     int option = 0;
 
     printf("\n\nGostaria de continuar jogando ou sair? \n1. Continuar jogando \n2. Sair \n\nOpção: ");
 
-    scanf("%d", &option);
-
     while (option != 1 && option != 2)
     {
+        scanf("%d", &option);
+
         switch (option)
         {
         case 1:
