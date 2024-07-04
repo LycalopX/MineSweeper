@@ -56,7 +56,7 @@ void selection(int *pointer1, int *pointer2, char fileName[11])
     {
         // Selecionar modo de jogo
         printf("\n\nSeja bem-vindo a campo minado!\n"
-               "\nEscolha modo de jogo: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mFácil 💣 \n\x1b[0m2. \033[0;34mIntermediário 🪖 \n\x1b[0m3. \033[0;31mEspecialista 🗡️ (20 minutos ou mais de jogo)\n\x1b[0m4. \033[0;30mUltranightmare 🎖️ (impossível)\n\033[0;36m---------------------------------------------\x1b[0m\n\nModo: ");
+               "\nEscolha modo de jogo: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mF%ccil \n\x1b[0m2. \033[0;34mIntermedi%crio \n\x1b[0m3. \033[0;31mEspecialista (20 minutos ou mais de jogo)\n\x1b[0m4. \033[0;30mUltranightmare (imposs%cvel)\n\033[0;36m---------------------------------------------\x1b[0m\n\nModo: ", 225, 225, 237);
         scanf("%i", &option);
 
         loop = 1;
@@ -123,7 +123,7 @@ void printOut(int *pointer1, struct block **Matrix)
 
         for (int p = 0; p < uppermatrix; p++)
         {
-            printf("|‾‾‾|");
+            printf("|%c%c%c|", 175, 175, 175);
         }
         printf("\n%c", alphabet[i]);
 
@@ -135,13 +135,13 @@ void printOut(int *pointer1, struct block **Matrix)
 
             if (flag)
             {
-                printf("| \033[1m\033[31m⚑ \x1b[0m|");
+                printf("| \033[1m\033[31m%c \x1b[0m|",  254);
                 continue;
             }
 
             if (revealed == 0)
             {
-                printf("| ▪︎ |");
+                printf("| \x1b[1m%c\x1b[0m |", 164);
                 continue;
             }
 
@@ -714,7 +714,7 @@ void organizeByPoints(int type, char fileName[20], char username[20],
 
     if (file == NULL)
     {
-        printf("\n Não foi possível organizar a leaderboard!! :o");
+        printf("\n N%co foi possível organizar a leaderboard!! :o", 227);
     }
 
     strings = malloc(sizeof(char *));
@@ -772,8 +772,8 @@ void organizeByPoints(int type, char fileName[20], char username[20],
                 continue;
             }
 
-            printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
-                   j + 1, username, *segundos, *pontos, findDays(*dia), findMonths(*dia), findYears(*dia) + 1969, *jganhos, *jperdidos);
+            printf("\n    %.2d. %s \nTempo: %is Pontua%c%co: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
+                   j + 1, username, *segundos, 231, 227, *pontos, findDays(*dia), findMonths(*dia), findYears(*dia) + 1969, *jganhos, *jperdidos);
 
             // Remover da lista que precisa ser checada
             strcpy(strings[index], "a");
@@ -804,8 +804,8 @@ void organizeByPoints(int type, char fileName[20], char username[20],
                 continue;
             }
 
-            printf("\n    %.2d. %s \nTempo: %is Pontuação: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
-                   j + 1, username, *segundos, *pontos, findDays(*dia), findMonths(*dia), findYears(*dia) + 1969, *jganhos, *jperdidos);
+            printf("\n    %.2d. %s \nTempo: %is Pontua%c%co: %i\nDia: %.2i/%.2i/%i\nJogos ganhos: %i\nJogos perdidos: %i \n\n",
+                   j + 1, username, *segundos, 231, 227, *pontos, findDays(*dia), findMonths(*dia), findYears(*dia) + 1969, *jganhos, *jperdidos);
 
             // Remover da lista que precisa ser checada
             strcpy(strings[index], "a");
@@ -968,7 +968,7 @@ void SelectionScreen(int option, char fileName[11], int *uppermatrix, int *bombc
                 selection(uppermatrix, bombcount, fileName);
 
                 // Imprime as opções de placar (por tempo ou pontuação)
-                printf("\n\nModo de placar: \n---------------------------------------------\n1. \033[1;30mTop 10 Tempos ⏳\x1b[0m \n2. \033[0;30mTop 10 Pontuações 🏅 \x1b[0m\n---------------------------------------------\n\nOpção: ");
+                printf("\n\nModo de placar: \n---------------------------------------------\n1. \033[1;30mTop 10 Tempos\x1b[0m \n2. \033[0;30mTop 10 Pontua%c%ces \x1b[0m\n---------------------------------------------\n\nOp%c%co: ", 231, 245, 231, 227);
                 scanf("%d", &option);
 
                 // Arquivo em que estão armazenadas as estatísticas
@@ -989,7 +989,7 @@ void SelectionScreen(int option, char fileName[11], int *uppermatrix, int *bombc
 
                 // Depois que isso se encerrou, ele pergunta novamente
 
-                printf("\n\nE agora? Gostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
+                printf("\n\nE agora? Gostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOp%c%co: ", 231, 227);
                 scanf("%d", &option);
 
                 // Usa a mesma variável para o case
@@ -1018,7 +1018,7 @@ void SelectionScreen(int option, char fileName[11], int *uppermatrix, int *bombc
             // Mesma pergunta de novo, até que a pessoa digite 1-3
             printf("\nValor inválido! \n\n");
             loop3 = 0;
-            printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nOpção: ");
+            printf("\n\nGostaria de: \n---------------------------------------------\n1. Jogar \n2. Consultar placar de jogadores \n3. Sair \n---------------------------------------------\n\nO%c%co: ", 231, 227);
             scanf("%d", &option);
             break;
         }
@@ -1133,7 +1133,7 @@ void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct bloc
 
                 printOut(pointer2, Matrix);
 
-                printf("\nPosição a revelar: ");
+                printf("\nPosi%c%co a revelar: ", 231, 227);
                 scanf("%s", string);
 
                 continue;
@@ -1144,7 +1144,7 @@ void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct bloc
 
                 printOut(pointer2, Matrix);
 
-                printf("\nPosição a revelar: ");
+                printf("\nPosi%c%co a revelar: ", 231, 227);
                 scanf("%s", string);
                 continue;
             }
@@ -1154,7 +1154,7 @@ void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct bloc
 
                 printf("\nValor inválido\n");
 
-                printf("\nPosição a revelar: ");
+                printf("\nPosi%c%co a revelar: ", 231, 227);
                 scanf("%s", string);
 
                 continue;
@@ -1191,7 +1191,7 @@ void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct bloc
             printf("\nExemplo: A0");
         }
 
-        printf("\nPosição a revelar: ");
+        printf("\nPosi%c%co a revelar: ", 231, 227);
         scanf("%s", string);
     }
 }
@@ -1201,7 +1201,7 @@ void ContinuarJogandoScreen(int *loop)
 {
     int option = 0;
 
-    printf("\n\nGostaria de continuar jogando ou sair? \n1. Continuar jogando \n2. Sair \n\nOpção: ");
+    printf("\n\nGostaria de continuar jogando ou sair? \n1. Continuar jogando \n2. Sair \n\nOpç%co: ", 227);
 
     while (option != 1 && option != 2)
     {

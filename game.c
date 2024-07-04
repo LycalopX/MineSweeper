@@ -1,5 +1,4 @@
-
-// Variáveis
+// Vari�veis
 #include "functions.h"
 
 int main()
@@ -8,6 +7,8 @@ int main()
     // Execution time pt. 1
     struct timeval t0, t1;
     gettimeofday(&t0, 0);
+
+    setlocale(LC_ALL, "Portuguese_Brazil");
 
     // Opção escolhida pelo usuário quando promptado, e variável loop
     // que encerra o programa
@@ -25,20 +26,23 @@ int main()
 
     int x, uppermatrix, bombcount, counter = 0;
 
-    // Estatísticas do jogador da partida! Extremamente importante quando analisando
+    // Estatásticas do jogador da partida! Extremamente importante quando analisando
     // os placares de jogadores diferentes usando findStats...
 
     int segundos, pontos, dia, jganhos, jperdidos;
 
     // Tela inicial do usuário
-    printf("\n \033[0;36m‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\x1b[0m\n"
-           "   \033[1;34m___                                     _                 _       \n"
+    printf("\n \033[0;36m");
+    for (int i = 0; i < 69; i++) { printf("%c", 175); }
+    printf("\x1b[0m\n");
+
+    printf("   \033[1;34m___                                     _                 _       \n"
            "  / __\\__ _ _ __ ___  _ __   ___     /\\/\\ (_)_ __   __ _  __| | ___  \n"
            " / /  / _` | '_ ` _ \\| '_ \\ / _ \\   /    \\| | '_ \\ / _` |/ _` |/ _ \\ \n"
            "/ /__| (_| | | | | | | |_) | (_) | / /\\/\\ \\ | | | | (_| | (_| | (_) |\n"
            "\\____/\\__,_|_| |_| |_| .__/ \\___/  \\/    \\/_|_| |_|\\__,_|\\__,_|\\___/ \n"
            "                     |_|\033[1;34m                                           \n"
-           "\n \033[0;36m_____________________________________________________________________\x1b[0m \n\nNome de usuário (sem espaços): ");
+           "\n \033[0;36m_____________________________________________________________________\x1b[0m \n\nNome de usu%crio (sem espa%cos): ", 225, 231);
 
     // Usuário para coleta de dados anteriormente salvos
     scanf("%s", username);
@@ -46,7 +50,7 @@ int main()
     // Loop para quando se inicia o jogo, se pessoa quer jogar novamente
     while (loop == 0)
     {
-        printf("\n\nGostaria de: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mJogar \x1b[0m\n2. \033[0;34mConsultar placar de jogadores \x1b[0m\n3. \033[0;31mSair \x1b[0m \n\033[0;36m---------------------------------------------\n\n\x1b[0mOpção: ");
+        printf("\n\nGostaria de: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mJogar \x1b[0m\n2. \033[0;34mConsultar placar de jogadores \x1b[0m\n3. \033[0;31mSair \x1b[0m \n\033[0;36m---------------------------------------------\n\n\x1b[0mOp%c%co: ", 231, 227);
         scanf("%d", &option);
 
         // Tela de escolher se vai jogar, se vai olhar a leaderboard, etc.
@@ -98,9 +102,9 @@ int main()
         {
             updateUser(time, 10, day, 1, 0, fileName, username, &segundos, &pontos, &dia, &jganhos, &jperdidos);
 
-            printf("\n\nParabéns %s! \nTodas as Bombas foram desarmadas!"
+            printf("\n\nParab%cns %s! \nTodas as Bombas foram desarmadas!"
                    "\n\nStats da partida: \nTempo: %.2i:%.2i:%.2i\nPontos totais: %i\n\n",
-                   username, hours, minutes, seconds, pontos);
+                   233, username, hours, minutes, seconds, pontos);
         }
 
         // Para saber se o jogador gostaria de continuar jogando ou encerrar

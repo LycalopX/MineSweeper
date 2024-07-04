@@ -17,3 +17,4 @@ struct block
 #include <time.h>
 #include <math.h>
 #include <sys/time.h>
+#include <locale.h>
