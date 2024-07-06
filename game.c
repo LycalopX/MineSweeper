@@ -4,10 +4,6 @@
 int main()
 {
 
-    // Execution time pt. 1
-    struct timeval t0, t1;
-    gettimeofday(&t0, 0);
-
     setlocale(LC_ALL, "Portuguese_Brazil");
 
     // Opção escolhida pelo usuário quando promptado, e variável loop
@@ -24,7 +20,7 @@ int main()
     // Configurações das matrizes que serão definidas conforme a dificuldade
     // de jogo escolhida pelo usuário
 
-    int x, uppermatrix, bombcount, counter = 0;
+    int x, uppermatrix, bombcount, counter = 100;
 
     // Estatásticas do jogador da partida! Extremamente importante quando analisando
     // os placares de jogadores diferentes usando findStats...
@@ -33,7 +29,10 @@ int main()
 
     // Tela inicial do usuário
     printf("\n \033[0;36m");
-    for (int i = 0; i < 69; i++) { printf("%c", 175); }
+    for (int i = 0; i < 69; i++)
+    {
+        printf("%c", 175);
+    }
     printf("\x1b[0m\n");
 
     printf("   \033[1;34m___                                     _                 _       \n"
@@ -42,7 +41,8 @@ int main()
            "/ /__| (_| | | | | | | |_) | (_) | / /\\/\\ \\ | | | | (_| | (_| | (_) |\n"
            "\\____/\\__,_|_| |_| |_| .__/ \\___/  \\/    \\/_|_| |_|\\__,_|\\__,_|\\___/ \n"
            "                     |_|\033[1;34m                                           \n"
-           "\n \033[0;36m_____________________________________________________________________\x1b[0m \n\nNome de usu%crio (sem espa%cos): ", 225, 231);
+           "\n \033[0;36m_____________________________________________________________________\x1b[0m \n\nNome de usu%crio (sem espa%cos): ",
+           225, 231);
 
     // Usuário para coleta de dados anteriormente salvos
     scanf("%s", username);
@@ -74,6 +74,10 @@ int main()
 
         // Índice de gameover
         int gmover = 0;
+
+        // Execution time pt. 1
+        struct timeval t0, t1;
+        gettimeofday(&t0, 0);
 
         // Inicia o jogo
         play(&gmover, &uppermatrix, &counter, &bombcount, Matrix);

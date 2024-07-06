@@ -56,7 +56,8 @@ void selection(int *pointer1, int *pointer2, char fileName[11])
     {
         // Selecionar modo de jogo
         printf("\n\nSeja bem-vindo a campo minado!\n"
-               "\nEscolha modo de jogo: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mF%ccil \n\x1b[0m2. \033[0;34mIntermedi%crio \n\x1b[0m3. \033[0;31mEspecialista (20 minutos ou mais de jogo)\n\x1b[0m4. \033[0;30mUltranightmare (imposs%cvel)\n\033[0;36m---------------------------------------------\x1b[0m\n\nModo: ", 225, 225, 237);
+               "\nEscolha modo de jogo: \n\033[0;36m---------------------------------------------\x1b[0m\n1. \033[0;32mF%ccil \n\x1b[0m2. \033[0;34mIntermedi%crio \n\x1b[0m3. \033[0;31mEspecialista (20 minutos ou mais de jogo)\n\x1b[0m4. \033[0;30mUltranightmare (imposs%cvel)\n\033[0;36m---------------------------------------------\x1b[0m\n\nModo: ",
+               225, 225, 237);
         scanf("%i", &option);
 
         loop = 1;
@@ -99,9 +100,8 @@ Imprimir a matriz atual do tabuleiro (útil para encontrar bugs de programação
 
 Usado toda a vez que o usuário faz um movimento
 */
-void printOut(int *pointer1, struct block **Matrix)
+void printOut(int uppermatrix, struct block **Matrix)
 {
-    int uppermatrix = *pointer1;
 
     // Números
     printf("\n ");
@@ -135,7 +135,7 @@ void printOut(int *pointer1, struct block **Matrix)
 
             if (flag)
             {
-                printf("| \033[1m\033[31m%c \x1b[0m|",  254);
+                printf("| \033[1m\033[31m%c \x1b[0m|", 254);
                 continue;
             }
 
@@ -190,7 +190,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
     {
         Matrix[i][j].revealed = 1;
         (*pointer2)++;
-        
 
         return;
     }
@@ -202,7 +201,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
     {
         Matrix[i][j].revealed = 1;
         (*pointer2)++;
-        
     }
 
     // Essencialmente, a checagem de casas reveladas surgiu da necessidade de garantir que
@@ -231,8 +229,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
                 {
                     Matrix[i - 1][j - 1].revealed = 1;
                     (*pointer2)++;
-
-                    
                 }
             }
         }
@@ -252,7 +248,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
                 {
                     Matrix[i + 1][j - 1].revealed = 1;
                     (*pointer2)++;
-                    
                 }
             }
         }
@@ -268,7 +263,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
             {
                 Matrix[i][j - 1].revealed = 1;
                 (*pointer2)++;
-                
             }
         }
     }
@@ -292,7 +286,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
                 {
                     Matrix[i - 1][j + 1].revealed = 1;
                     (*pointer2)++;
-                    
                 }
             }
         }
@@ -311,7 +304,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
                 {
                     Matrix[i + 1][j + 1].revealed = 1;
                     (*pointer2)++;
-                    
                 }
             }
         }
@@ -326,7 +318,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
             {
                 Matrix[i][j + 1].revealed = 1;
                 (*pointer2)++;
-                
             }
         }
     }
@@ -346,7 +337,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
             {
                 Matrix[i - 1][j].revealed = 1;
                 (*pointer2)++;
-                
             }
         }
     }
@@ -366,7 +356,6 @@ void read(int i, int j, int uppermatrix, int *pointer2, struct block **Matrix)
             {
                 Matrix[i + 1][j].revealed = 1;
                 (*pointer2)++;
-                
             }
         }
     }
@@ -610,13 +599,7 @@ int findUser(FILE *file, char username[20])
 void findStats(char info[40], char fileName[11], char username[20],
                int *segundos, int *pontos, int *dia, int *jganhos, int *jperdidos)
 {
-
-    // "LycalopX 0 0 0 0 0"
-    char temp_filename[1024];
-
-    // LER - Valores
-    strcpy(temp_filename, "temp_____");
-    strcat(temp_filename, fileName);
+    char temp_filename[4] = "temp";
 
     FILE *file = fopen(temp_filename, "w");
 
@@ -658,8 +641,9 @@ int findBiggestScore(char **Matrix, int height, char fileName[11], char username
 
         // Quando o string está vazio, ele muda o valor de segundos para 0
         findStats(Matrix[i], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
+        remove("temp");
 
-        if (*pontos > num)
+        if (*pontos > num && *pontos)
         {
             index = i;
             num = *pontos;
@@ -684,6 +668,7 @@ int findSmallestTime(char **Matrix, int height, char fileName[11], char username
         }
 
         findStats(Matrix[i], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
+        remove("temp");
 
         if ((*segundos < num || num == 0) && *segundos != 0)
         {
@@ -753,6 +738,7 @@ void organizeByPoints(int type, char fileName[20], char username[20],
             index = findBiggestScore(strings, p, fileName, username, segundos, pontos, dia, jganhos, jperdidos);
 
             findStats(strings[index], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
+            remove("temp");
 
             // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
             if (!strcmp(username, previousIndex))
@@ -785,6 +771,7 @@ void organizeByPoints(int type, char fileName[20], char username[20],
 
             // Achando os dados
             findStats(strings[index], fileName, username, segundos, pontos, dia, jganhos, jperdidos);
+            remove("temp");
 
             // Caso seja a mesma pessoa, quer dizer que o resto tem pontuação zero...
             if (!strcmp(username, previousIndex))
@@ -871,6 +858,7 @@ void updateUser(
         if (StartsWith(linha, username))
         {
             findStats(linha, fileName, username, pointer1, pointer2, pointer3, pointer4, pointer5);
+            remove("temp");
 
             if (*pointer1 > newTime || *pointer1 == 0)
             {
@@ -1047,9 +1035,6 @@ void FileMaker(char fileName[11], char username[20])
 
         // Arquivo atualizado
         file = fopen(fileName, "r");
-
-        // Abrindo o usuário
-        info = findUser(file, username);
     }
 }
 
@@ -1131,7 +1116,7 @@ void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct bloc
             {
                 Matrix[i][j].flag = 1;
 
-                printOut(pointer2, Matrix);
+                printOut(uppermatrix, Matrix);
 
                 printf("\nPosi%c%co a revelar: ", 231, 227);
                 scanf("%s", string);
@@ -1142,7 +1127,7 @@ void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct bloc
             {
                 Matrix[i][j].flag = 0;
 
-                printOut(pointer2, Matrix);
+                printOut(uppermatrix, Matrix);
 
                 printf("\nPosi%c%co a revelar: ", 231, 227);
                 scanf("%s", string);
@@ -1180,7 +1165,7 @@ void play(int *pointer, int *pointer2, int *pointer3, int *pointer4, struct bloc
         }
 
         // Printing out the Matrix
-        printOut(pointer2, Matrix);
+        printOut(uppermatrix, Matrix);
 
         if ((*pointer3) >= ((uppermatrix * uppermatrix) - bombcount))
         {
